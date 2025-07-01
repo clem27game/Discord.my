@@ -5,7 +5,7 @@
 my.console('🚀 Démarrage du bot avancé Discord.my...')
 
 // Connexion
-my.discord.connect('VOTRE_TOKEN_BOT_ICI')
+my.discord.connect('Votre token')
 my.discord.prefix('>')
 
 // Statut dynamique
