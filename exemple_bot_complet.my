@@ -1,0 +1,160 @@
+
+// Exemple de bot Discord.my complet avec toutes les fonctionnalités v2.0
+// Bot multi-fonctions: modération, divertissement, utilitaires
+
+my.console('🚀 Démarrage du bot Discord.my COMPLET v2.0...')
+
+// === CONFIGURATION ===
+my.discord.connect('VOTRE_TOKEN_BOT')
+my.discord.prefix('.')
+my.discord.status('watching', 'Discord.my v2.0 en action', 'online')
+
+// Variables du bot
+my.variable bot_name = 'Maya-Complete'
+my.variable version = '2.0.0'
+my.variable owner = 'Maya Team'
+my.variable server_count = '1'
+
+// Messages d'erreur personnalisés
+my.discord.error('no_permission', '🚫 Permissions insuffisantes!')
+my.discord.error('invalid_user', '❌ Utilisateur invalide!')
+my.discord.error('cooldown', '⏳ Attendez avant de réutiliser cette commande!')
+my.discord.error('bot_error', '⚠️ Erreur système!')
+
+my.console('✅ Configuration du bot terminée!')
+
+// === COMMANDES D'INFORMATION ===
+
+my.discord.command('help', 'embed')
+my.discord.embed('title', '📚 Aide - {bot_name}', 'description', '**🛠️ Modération:**\n`.kick @user` - Expulser un membre\n`.ban @user` - Bannir un membre\n`.purge 10` - Supprimer messages\n\n**🎮 Divertissement:**\n`.meme` - Meme aléatoire\n`.joke` - Blague\n`.8ball question` - Boule magique\n`.flip` - Pile ou face\n\n**🔧 Utilitaires:**\n`.weather Paris` - Météo\n`.qr texte` - QR Code\n`.password 12` - Mot de passe\n\n**💰 Économie:**\n`.balance` - Voir solde\n`.daily` - Bonus quotidien', 'color', '#3498db', 'footer', 'Discord.my v{version}')
+
+my.discord.command('info', 'embed')
+my.discord.embed('title', '🤖 {bot_name}', 'description', '**Version:** {version}\n**Créateur:** {owner}\n**Serveurs:** {server_count}\n**Fonctionnalités:** 50+', 'color', '#e74c3c', 'thumbnail', 'https://i.imgur.com/bot-avatar.png', 'footer', 'Propulsé par Discord.my')
+
+// === MODÉRATION ===
+
+my.discord.command('kick', 'Membre expulsé!')
+my.discord.kick('@user', 'Expulsion par commande')
+
+my.discord.command('ban', 'Membre banni!')
+my.discord.ban('@user', 'Bannissement par commande')
+
+my.discord.command('mute', 'Membre mis en sourdine!')
+my.discord.mute('@user', '10m', 'Timeout de 10 minutes')
+
+my.discord.command('purge', 'Messages supprimés!')
+my.discord.purge('10')
+
+// === DIVERTISSEMENT ===
+
+my.discord.command('meme', 'embed')
+my.random.image('meme')
+my.discord.embed('title', '😂 Meme du jour', 'image', '{random_image}', 'color', '#f39c12')
+
+my.discord.command('cat', 'embed')
+my.random.image('cat')
+my.discord.embed('title', '🐱 Chat mignon', 'image', '{random_image}', 'color', '#9b59b6')
+
+my.discord.command('dog', 'embed')
+my.random.image('dog')
+my.discord.embed('title', '🐶 Chien adorable', 'image', '{random_image}', 'color', '#e67e22')
+
+my.discord.command('joke', 'embed')
+my.random.joke()
+my.discord.embed('title', '😄 Blague du jour', 'description', '{random_joke}', 'color', '#2ecc71')
+
+my.discord.command('quote', 'embed')
+my.random.quote()
+my.discord.embed('title', '💭 Citation inspirante', 'description', '{random_quote}', 'color', '#34495e')
+
+my.discord.command('fact', 'embed')
+my.random.fact()
+my.discord.embed('title', '🧠 Le saviez-vous?', 'description', '{random_fact}', 'color', '#1abc9c')
+
+my.discord.command('flip', 'embed')
+my.game.coinflip()
+my.discord.embed('title', '🪙 Pile ou Face', 'description', 'Résultat: {coinflip}', 'color', '#f1c40f')
+
+my.discord.command('8ball', 'embed')
+my.game.8ball('Question posée')
+my.discord.embed('title', '🎱 Boule Magique', 'description', '{8ball_answer}', 'color', '#8e44ad')
+
+my.discord.command('rps', 'embed')
+my.game.rps('pierre')
+my.discord.embed('title', '✂️ Pierre-Papier-Ciseaux', 'description', '{rps_result}', 'color', '#e91e63')
+
+// === ÉCONOMIE ===
+
+my.discord.command('balance', 'embed')
+my.economy.balance('@user')
+my.discord.embed('title', '💰 Votre Portefeuille', 'description', '{user_balance}', 'color', '#27ae60')
+
+my.discord.command('daily', 'embed')
+my.economy.daily()
+my.discord.embed('title', '🎁 Bonus Quotidien', 'description', '{daily_bonus}', 'color', '#f39c12')
+
+my.discord.command('level', 'embed')
+my.level.check('@user')
+my.discord.embed('title', '📊 Votre Niveau', 'description', '{user_level}', 'color', '#3498db')
+
+// === UTILITAIRES ===
+
+my.discord.command('weather', 'embed')
+my.weather('Paris')
+my.discord.embed('title', '🌤️ Météo', 'description', '{weather_info}', 'color', '#00bcd4')
+
+my.discord.command('qr', 'embed')
+my.qr.generate('https://discord.gg/maya')
+my.discord.embed('title', '📱 QR Code Généré', 'image', '{qr_url}', 'color', '#607d8b')
+
+my.discord.command('password', 'embed')
+my.password.generate(12, 'strong')
+my.discord.embed('title', '🔐 Mot de Passe Sécurisé', 'description', '{generated_password}', 'color', '#795548')
+
+my.discord.command('shorten', 'embed')
+my.url.shorten('https://example.com/very/long/url')
+my.discord.embed('title', '🔗 URL Raccourcie', 'description', 'URL courte: {short_url}', 'color', '#009688')
+
+my.discord.command('encode', 'embed')
+my.base64.encode('Hello Discord.my!')
+my.discord.embed('title', '🔤 Encodage Base64', 'description', 'Résultat: `{base64_encoded}`', 'color', '#4caf50')
+
+my.discord.command('translate', 'embed')
+my.translate('Hello', 'en', 'fr')
+my.discord.embed('title', '🌍 Traduction', 'description', 'Traduction: {translated_text}', 'color', '#ff5722')
+
+// === SONDAGES ET INTERACTIONS ===
+
+my.discord.command('poll', 'embed')
+my.discord.poll('Quel est votre langage préféré?', '🐍 Python', '☕ Java', '🚀 JavaScript', '💎 Ruby')
+
+my.discord.command('vote', 'embed')
+my.discord.poll('Votez pour la prochaine fonctionnalité!', '🎵 Musique', '🎨 Art', '📊 Stats', '🤖 IA')
+
+// === ÉVÉNEMENTS ===
+
+my.discord.command('event', 'embed')
+my.event.create('Tournoi Maya', '2024-12-31', 'Grand tournoi de fin d\'année!')
+my.discord.embed('title', '📅 Nouvel Événement', 'description', '{event_created}', 'color', '#673ab7')
+
+my.discord.command('reminder', 'embed')
+my.reminder.set('@user', '1h', 'N\'oublie pas de coder!')
+my.discord.embed('title', '⏰ Rappel Programmé', 'description', '{reminder_set}', 'color', '#ff9800')
+
+// === INFORMATIONS SERVEUR ===
+
+my.discord.command('server', 'embed')
+my.discord.server()
+
+my.discord.command('userinfo', 'embed')
+my.discord.user.info('@user')
+
+my.discord.command('avatar', 'embed')
+my.discord.avatar('@user')
+
+my.discord.command('stats', 'embed')
+my.discord.stats()
+
+my.console('🎯 Bot complet configuré avec 25+ commandes!')
+my.console('💎 Fonctionnalités: Modération, Divertissement, Économie, Utilitaires')
+my.console('🚀 {bot_name} v{version} prêt à conquérir Discord!')
