@@ -6,7 +6,7 @@
 my.console('🚀 Démarrage du bot Discord.my...')
 
 // Connexion du bot (remplacez par votre token)
-my.discord.connect('votre Token')
+my.discord.connect('votre token')
 
 // Définir le préfixe des commandes
 my.discord.prefix('!')

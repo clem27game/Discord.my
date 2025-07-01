@@ -1291,7 +1291,7 @@ if (require.main === module) {
 
     if (args.length === 0) {
         console.log(`
-🤖 Discord.my - Créateur de bots Discord avec la syntaxe Maya
+🤖 Discord.my - Créateur de bots Discord en Maya
 
 Usage:
   maya Discord.my-allume <fichier.my>

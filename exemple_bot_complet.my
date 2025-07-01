@@ -5,7 +5,7 @@
 my.console('🚀 Démarrage du bot Discord.my COMPLET v2.0...')
 
 // === CONFIGURATION ===
-my.discord.connect('VOTRE_TOKEN_BOT')
+my.discord.connect('Votre token')
 my.discord.prefix('.')
 my.discord.status('watching', 'Discord.my v2.0 en action', 'online')
 
