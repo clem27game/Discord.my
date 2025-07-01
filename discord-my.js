@@ -194,29 +194,29 @@ class DiscordMyBot {
             }
 
             // my.discord.kick - Kick un membre
-            else if (line.startsWith('my.discord.kick') && message) {
+            else if (line.startsWith('my.discord.kick')) {
                 const args = this.parseArguments(line);
                 if (this.currentCommand && this.commands.has(this.currentCommand)) {
                     // Stocker les paramètres de kick dans la commande
                     this.commands.get(this.currentCommand).kickParams = {
-                        target: args[0],
+                        target: args[0] || 'args[0]',
                         reason: args[1] || 'Aucune raison spécifiée'
                     };
-                } else {
+                } else if (message) {
                     await this.kickMember(message, args[0], args[1]);
                 }
             }
 
             // my.discord.ban - Ban un membre
-            else if (line.startsWith('my.discord.ban') && message) {
+            else if (line.startsWith('my.discord.ban')) {
                 const args = this.parseArguments(line);
                 if (this.currentCommand && this.commands.has(this.currentCommand)) {
                     // Stocker les paramètres de ban dans la commande
                     this.commands.get(this.currentCommand).banParams = {
-                        target: args[0],
+                        target: args[0] || 'args[0]',
                         reason: args[1] || 'Aucune raison spécifiée'
                     };
-                } else {
+                } else if (message) {
                     await this.banMember(message, args[0], args[1]);
                 }
             }
@@ -230,24 +230,31 @@ class DiscordMyBot {
             }
 
             // my.discord.dm - Envoyer un message privé
-            else if (line.startsWith('my.discord.dm') && message) {
+            else if (line.startsWith('my.discord.dm')) {
                 const args = this.parseArguments(line);
                 if (this.currentCommand && this.commands.has(this.currentCommand)) {
                     // Stocker les paramètres de DM dans la commande
                     this.commands.get(this.currentCommand).dmParams = {
-                        target: args[0],
+                        target: args[0] || 'args[0]',
                         message: args[1] || 'Message par défaut'
                     };
-                } else if (args.length >= 2) {
+                } else if (message && args.length >= 2) {
                     await this.sendDM(message, args[0], args[1]);
                 }
             }
 
             // my.discord.role - Gérer les rôles
-            else if (line.startsWith('my.discord.role') && message) {
+            else if (line.startsWith('my.discord.role')) {
                 const args = this.parseArguments(line);
-                if (args.length >= 3) {
-                    await this.manageRole(message, args[0], args[1], args[2]);
+                if (this.currentCommand && this.commands.has(this.currentCommand)) {
+                    // Stocker les paramètres de rôle dans la commande
+                    this.commands.get(this.currentCommand).roleParams = {
+                        action: args[0] || 'add',
+                        target: args[1] || 'args[0]',
+                        role: args[2] || 'Membre'
+                    };
+                } else if (message && args.length >= 3) {
+                    await this.manageRole(message, args[1], args[0], args[2]);
                 }
             }
 
@@ -260,29 +267,35 @@ class DiscordMyBot {
             }
 
             // my.discord.poll - Créer un sondage
-            else if (line.startsWith('my.discord.poll') && message) {
+            else if (line.startsWith('my.discord.poll')) {
                 const args = this.parseArguments(line);
                 if (this.currentCommand && this.commands.has(this.currentCommand)) {
                     // Stocker les paramètres de sondage dans la commande
                     this.commands.get(this.currentCommand).pollParams = {
-                        question: args[0],
+                        question: args[0] || 'Sondage',
                         options: args.slice(1)
                     };
-                } else if (args.length >= 2) {
+                } else if (message && args.length >= 2) {
                     await this.createPoll(message, args[0], args.slice(1));
                 }
             }
 
-            // my.discord.reaction - Ajouter une réaction
-            else if (line.startsWith('my.discord.reaction') && message) {
+            // my.discord.react - Ajouter une réaction (corriger le nom)
+            else if (line.startsWith('my.discord.react')) {
                 const args = this.parseArguments(line);
                 if (this.currentCommand && this.commands.has(this.currentCommand)) {
                     // Stocker les paramètres de réaction dans la commande
                     this.commands.get(this.currentCommand).reactionParams = {
-                        emoji: args[0] || '👍'
+                        emojis: args.length > 0 ? args : ['👍']
                     };
-                } else if (args.length > 0) {
-                    await message.react(args[0]);
+                } else if (message && args.length > 0) {
+                    for (const emoji of args) {
+                        try {
+                            await message.react(emoji);
+                        } catch (error) {
+                            console.error(`Erreur lors de l'ajout de la réaction ${emoji}:`, error);
+                        }
+                    }
                 }
             }
 
@@ -716,7 +729,14 @@ class DiscordMyBot {
             }
 
             if (command.reactionParams) {
-                await message.react(command.reactionParams.emoji);
+                const emojis = command.reactionParams.emojis || [command.reactionParams.emoji || '👍'];
+                for (const emoji of emojis) {
+                    try {
+                        await message.react(emoji);
+                    } catch (error) {
+                        console.error(`Erreur lors de l'ajout de la réaction ${emoji}:`, error);
+                    }
+                }
             }
 
             if (command.muteParams) {
@@ -727,6 +747,11 @@ class DiscordMyBot {
             if (command.purgeParams) {
                 const amount = command.purgeParams.amount === 'args[0]' ? args[0] : command.purgeParams.amount;
                 await this.purgeMessages(message, amount);
+            }
+
+            if (command.roleParams) {
+                const target = command.roleParams.target === 'args[0]' ? args[0] : command.roleParams.target;
+                await this.manageRole(message, target, command.roleParams.action, command.roleParams.role);
             }
 
             // Envoyer l'embed si défini
@@ -777,7 +802,7 @@ class DiscordMyBot {
                 case 'footer':
                     embed.setFooter({ text: value });
                     break;
-                case 'image':`tool_code`
+                case 'image':
                     embed.setImage(value);
                     break;
                 case 'thumbnail':
