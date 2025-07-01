@@ -1,0 +1,24 @@
+
+#!/bin/bash
+
+# Script global maya pour Discord.my
+if [ "$1" = "Discord.my-allume" ]; then
+    if [ -z "$2" ]; then
+        echo "❌ Usage: maya Discord.my-allume <fichier.my>"
+        exit 1
+    fi
+    
+    node discord-my.js "$2"
+elif [ "$1" = "version" ]; then
+    echo "Discord.my v1.0.0 - Version Discord du langage Maya"
+elif [ "$1" = "help" ]; then
+    echo "
+🤖 Discord.my - Commandes disponibles:
+
+maya Discord.my-allume <fichier.my>    # Démarrer un bot Discord
+maya version                           # Afficher la version
+maya help                             # Afficher cette aide
+    "
+else
+    echo "❌ Commande inconnue. Utilisez 'maya help' pour voir les commandes disponibles."
+fi

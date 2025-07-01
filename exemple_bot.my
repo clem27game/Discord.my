@@ -1,0 +1,47 @@
+
+// Exemple de bot Discord créé avec Discord.my
+// Pour démarrer: maya Discord.my-allume exemple_bot.my
+
+my.console('🚀 Démarrage du bot Discord.my...')
+
+// Connexion du bot (remplacez par votre token)
+my.discord.connect('VOTRE_TOKEN_BOT_ICI')
+
+// Définir le préfixe des commandes
+my.discord.prefix('!')
+
+// Définir le statut du bot
+my.discord.status('playing', 'avec Discord.my', 'online')
+
+// Messages d'erreur personnalisés
+my.discord.error('permission', 'Vous n\'avez pas les permissions nécessaires!')
+my.discord.error('user_not_found', 'Utilisateur introuvable!')
+
+// Variables pour le bot
+my.variable serveur_name = 'Mon Super Serveur'
+my.variable admin_role = 'Administrateur'
+
+// Commande de salutation simple
+my.discord.command('salut', 'Salut! Je suis un bot créé avec Discord.my! 🤖')
+
+// Commande avec embed personnalisé
+my.discord.command('info', 'embed')
+my.discord.embed('title', 'Informations du Bot', 'description', 'Je suis un bot Discord créé avec Discord.my!', 'color', '#00ff00', 'footer', 'Powered by Discord.my', 'thumbnail', 'https://example.com/bot-avatar.png')
+
+// Commande avec nombre aléatoire
+my.discord.command('dice', 'Voici votre nombre aléatoire:')
+my.random.number(1, 100)
+
+// Commande d'embed avec informations du serveur
+my.discord.command('serveur', 'embed')
+my.discord.embed('title', 'Informations du Serveur', 'description', 'Nom: {serveur_name}', 'color', '#ff5500', 'footer', 'Discord.my Bot')
+
+// Commandes de modération (nécessitent des permissions)
+my.discord.command('kick', 'Membre kické avec succès!')
+// Usage: !kick @utilisateur raison
+
+my.discord.command('ban', 'Membre banni avec succès!')
+// Usage: !ban @utilisateur raison
+
+my.console('✅ Configuration du bot terminée!')
+my.console('🤖 Bot prêt à fonctionner sur Discord!')

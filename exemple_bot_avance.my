@@ -1,0 +1,68 @@
+
+// Exemple avancé de bot Discord avec Discord.my
+// Bot de modération et de divertissement
+
+my.console('🚀 Démarrage du bot avancé Discord.my...')
+
+// Connexion
+my.discord.connect('VOTRE_TOKEN_BOT_ICI')
+my.discord.prefix('>')
+
+// Statut dynamique
+my.discord.status('watching', 'les membres du serveur', 'dnd')
+
+// Variables du bot
+my.variable bot_name = 'Maya-Discord'
+my.variable version = '1.0.0'
+my.variable owner = 'Votre Nom'
+
+// Messages d'erreur personnalisés
+my.discord.error('no_permission', '🚫 Vous n\'avez pas les permissions pour cette commande!')
+my.discord.error('invalid_user', '❌ Utilisateur invalide ou introuvable!')
+my.discord.error('bot_error', '⚠️ Une erreur est survenue lors de l\'exécution!')
+
+// === COMMANDES DE BASE ===
+
+// Commande d'aide avec embed
+my.discord.command('aide', 'embed')
+my.discord.embed('title', '📚 Commandes disponibles', 'description', '`>aide` - Affiche cette aide\n`>info` - Informations du bot\n`>dice` - Lancer de dé\n`>kick @user` - Kick un membre\n`>ban @user` - Ban un membre\n`>avatar @user` - Avatar d\'un membre', 'color', '#3498db', 'footer', 'Discord.my v{version}')
+
+// Informations du bot
+my.discord.command('info', 'embed')
+my.discord.embed('title', '🤖 {bot_name}', 'description', 'Bot Discord créé avec Discord.my\nVersion: {version}\nCréateur: {owner}', 'color', '#e91e63', 'footer', 'Powered by Discord.my', 'thumbnail', 'https://i.imgur.com/example.png')
+
+// === COMMANDES DE DIVERTISSEMENT ===
+
+// Lancer de dé avancé
+my.discord.command('dice', 'embed')
+my.random.number(1, 6)
+my.discord.embed('title', '🎲 Lancer de dé', 'description', 'Résultat: **{random}**', 'color', '#f39c12')
+
+// Commande de choix aléatoire
+my.discord.command('choix', 'embed')
+my.random.number(1, 2)
+my.discord.embed('title', '🤔 Choix aléatoire', 'description', 'Ma réponse: **Oui**', 'color', '#27ae60')
+
+// === COMMANDES DE MODÉRATION ===
+
+// Kick avec raison
+my.discord.command('kick', 'Membre kické!')
+my.discord.kick()
+
+// Ban avec raison  
+my.discord.command('ban', 'Membre banni!')
+my.discord.ban()
+
+// === COMMANDES D'INFORMATION ===
+
+// Avatar d'un utilisateur
+my.discord.command('avatar', 'embed')
+my.discord.embed('title', '🖼️ Avatar de l\'utilisateur', 'image', 'URL_AVATAR_ICI', 'color', '#9b59b6')
+
+// Informations du serveur
+my.discord.command('serveur', 'embed')
+my.discord.embed('title', '🏠 Informations du serveur', 'description', 'Membres: **{member_count}**\nCanaux: **{channel_count}**\nRôles: **{role_count}**', 'color', '#34495e', 'thumbnail', 'URL_ICON_SERVEUR')
+
+my.console('✅ Bot avancé configuré!')
+my.console('🎯 Commandes disponibles: aide, info, dice, choix, kick, ban, avatar, serveur')
+my.console('🔥 Bot Discord.my prêt à l\'action!')
