@@ -5,6 +5,12 @@
 
 Discord.my est une bibliothèque indépendante qui permet de créer des bots Discord en utilisant la syntaxe familière du langage de programmation Maya.
 
+# ❤️ Prérequis ❤️
+
+🌸**Node.js**🌸🌸 -> environnement d'exécution Node.js (pour exécuter l'interprèteur de Discord.my)
+
+🩷**Repos Discord.my et dossier nommer Discord.my** -> clonez le repos github de Discord.my ici présent pour avoir le dossier 
+
 ## 🚀 Installation
 
 ```bash
