@@ -1,6 +1,8 @@
 
 # 🤖 Discord.my - Version Discord du langage Maya
 
+![Maya for Discord - Discord.my](http://www.image-heberg.fr/files/17513588263039804052.png)
+
 Discord.my est une bibliothèque indépendante qui permet de créer des bots Discord en utilisant la syntaxe familière du langage de programmation Maya.
 
 ## 🚀 Installation
