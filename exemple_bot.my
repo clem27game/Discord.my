@@ -76,27 +76,64 @@ my.discord.poll('Question du sondage', 'Option 1', 'Option 2', 'Option 3')
 
 // === COMMANDES DE MODÉRATION AMÉLIORÉES ===
 
-// Kick avec raison
-my.discord.command('kick', 'Membre expulsé avec succès!')
-my.discord.kick()
+// === COMMANDES DE MODÉRATION AVANCÉES ===
 
-// Ban avec raison  
-my.discord.command('ban', 'Membre banni avec succès!')
-my.discord.ban()
+// Kick avec mention en paramètre de commande
+my.discord.command('kick', 'embed')
+my.discord.kick('args[0]', 'Expulsé par un modérateur')
+my.discord.embed('title', '⚔️ Membre Expulsé', 'description', 'Le membre a été expulsé du serveur.', 'color', '#e74c3c', 'footer', 'Action de modération')
+
+// Ban avec mention en paramètre de commande
+my.discord.command('ban', 'embed')
+my.discord.ban('args[0]', 'Banni par un modérateur')
+my.discord.embed('title', '🔨 Membre Banni', 'description', 'Le membre a été banni définitivement.', 'color', '#c0392b', 'footer', 'Action de modération')
+
+// Mute temporaire
+my.discord.command('mute', 'embed')
+my.discord.mute('args[0]', '10m', 'Timeout par un modérateur')
+my.discord.embed('title', '🔇 Membre Mute', 'description', 'Le membre a été mute pour 10 minutes.', 'color', '#f39c12')
+
+// Purge de messages
+my.discord.command('purge', 'embed')
+my.discord.purge('args[0]')
+my.discord.embed('title', '🗑️ Messages Supprimés', 'description', 'Les messages ont été supprimés avec succès.', 'color', '#95a5a6')
 
 // Gestion des rôles
 my.discord.command('role', 'Rôle géré avec succès!')
 my.discord.role('add')
 
-// === COMMANDES SOCIALES ===
+// === COMMANDES SOCIALES AMÉLIORÉES ===
 
-// Message privé
+// Message privé personnalisé
 my.discord.command('dm', 'Message privé envoyé!')
-my.discord.dm()
+my.discord.dm('args[0]', '🤖 Salut! Tu as reçu un message du bot {bot_version} créé avec Discord.my!')
 
-// Réaction automatique
+// Sondage avec options personnalisées
+my.discord.command('poll', 'embed')
+my.discord.poll('Quel est votre langage préféré?', 'JavaScript', 'Python', 'Maya', 'Autre')
+my.discord.embed('title', '📊 Sondage Créé', 'description', 'Votez en cliquant sur les réactions!', 'color', '#3498db')
+
+// Réaction automatique personnalisée
 my.discord.command('react', 'Réaction ajoutée!')
-my.discord.reaction('❤️')
+my.discord.reaction('🎉')
+
+// === NOUVELLES COMMANDES UTILITAIRES ===
+
+// Informations du serveur
+my.discord.command('server', 'embed')
+my.discord.server.info()
+
+// Informations utilisateur
+my.discord.command('userinfo', 'embed')
+my.discord.user.info('args[0]')
+
+// Avatar d'un utilisateur
+my.discord.command('avatar', 'embed')
+my.discord.avatar('args[0]')
+
+// Commande de statistiques
+my.discord.command('stats', 'embed')
+my.discord.embed('title', '📈 Statistiques du Bot', 'description', '**Version:** {bot_version}\n**Serveur:** {serveur_name}\n**Commandes:** 25+\n**Fonctionnalités:** Modération, Fun, Utilitaires\n**Uptime:** Permanent', 'color', '#2ecc71', 'thumbnail', 'https://cdn.discordapp.com/attachments/123/stats.png', 'footer', 'Discord.my v{bot_version}', 'timestamp', 'now')
 
 my.console('✅ Configuration du bot terminée!')
 my.console('🎯 Nouvelles fonctionnalités: images aléatoires, calculatrice, sondages, gestion avancée')

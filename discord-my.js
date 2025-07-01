@@ -196,13 +196,29 @@ class DiscordMyBot {
             // my.discord.kick - Kick un membre
             else if (line.startsWith('my.discord.kick') && message) {
                 const args = this.parseArguments(line);
-                await this.kickMember(message, args[0], args[1]);
+                if (this.currentCommand && this.commands.has(this.currentCommand)) {
+                    // Stocker les paramètres de kick dans la commande
+                    this.commands.get(this.currentCommand).kickParams = {
+                        target: args[0],
+                        reason: args[1] || 'Aucune raison spécifiée'
+                    };
+                } else {
+                    await this.kickMember(message, args[0], args[1]);
+                }
             }
             
             // my.discord.ban - Ban un membre
             else if (line.startsWith('my.discord.ban') && message) {
                 const args = this.parseArguments(line);
-                await this.banMember(message, args[0], args[1]);
+                if (this.currentCommand && this.commands.has(this.currentCommand)) {
+                    // Stocker les paramètres de ban dans la commande
+                    this.commands.get(this.currentCommand).banParams = {
+                        target: args[0],
+                        reason: args[1] || 'Aucune raison spécifiée'
+                    };
+                } else {
+                    await this.banMember(message, args[0], args[1]);
+                }
             }
             
             // my.console - Afficher dans la console
@@ -216,7 +232,13 @@ class DiscordMyBot {
             // my.discord.dm - Envoyer un message privé
             else if (line.startsWith('my.discord.dm') && message) {
                 const args = this.parseArguments(line);
-                if (args.length >= 2) {
+                if (this.currentCommand && this.commands.has(this.currentCommand)) {
+                    // Stocker les paramètres de DM dans la commande
+                    this.commands.get(this.currentCommand).dmParams = {
+                        target: args[0],
+                        message: args[1] || 'Message par défaut'
+                    };
+                } else if (args.length >= 2) {
                     await this.sendDM(message, args[0], args[1]);
                 }
             }
@@ -240,7 +262,13 @@ class DiscordMyBot {
             // my.discord.poll - Créer un sondage
             else if (line.startsWith('my.discord.poll') && message) {
                 const args = this.parseArguments(line);
-                if (args.length >= 3) {
+                if (this.currentCommand && this.commands.has(this.currentCommand)) {
+                    // Stocker les paramètres de sondage dans la commande
+                    this.commands.get(this.currentCommand).pollParams = {
+                        question: args[0],
+                        options: args.slice(1)
+                    };
+                } else if (args.length >= 2) {
                     await this.createPoll(message, args[0], args.slice(1));
                 }
             }
@@ -248,9 +276,57 @@ class DiscordMyBot {
             // my.discord.reaction - Ajouter une réaction
             else if (line.startsWith('my.discord.reaction') && message) {
                 const args = this.parseArguments(line);
-                if (args.length > 0) {
+                if (this.currentCommand && this.commands.has(this.currentCommand)) {
+                    // Stocker les paramètres de réaction dans la commande
+                    this.commands.get(this.currentCommand).reactionParams = {
+                        emoji: args[0] || '👍'
+                    };
+                } else if (args.length > 0) {
                     await message.react(args[0]);
                 }
+            }
+            
+            // my.discord.server.info - Informations du serveur
+            else if (line.startsWith('my.discord.server.info') && message) {
+                await this.getServerInfo(message);
+            }
+            
+            // my.discord.user.info - Informations de l'utilisateur
+            else if (line.startsWith('my.discord.user.info') && message) {
+                const args = this.parseArguments(line);
+                await this.getUserInfo(message, args[0]);
+            }
+            
+            // my.discord.mute - Mute un membre
+            else if (line.startsWith('my.discord.mute') && message) {
+                const args = this.parseArguments(line);
+                if (this.currentCommand && this.commands.has(this.currentCommand)) {
+                    this.commands.get(this.currentCommand).muteParams = {
+                        target: args[0],
+                        duration: args[1] || '10m',
+                        reason: args[2] || 'Aucune raison spécifiée'
+                    };
+                } else {
+                    await this.muteMember(message, args[0], args[1], args[2]);
+                }
+            }
+            
+            // my.discord.purge - Supprimer des messages
+            else if (line.startsWith('my.discord.purge') && message) {
+                const args = this.parseArguments(line);
+                if (this.currentCommand && this.commands.has(this.currentCommand)) {
+                    this.commands.get(this.currentCommand).purgeParams = {
+                        amount: args[0] || '10'
+                    };
+                } else {
+                    await this.purgeMessages(message, args[0]);
+                }
+            }
+            
+            // my.discord.avatar - Obtenir l'avatar d'un utilisateur
+            else if (line.startsWith('my.discord.avatar') && message) {
+                const args = this.parseArguments(line);
+                await this.getUserAvatar(message, args[0]);
             }
             
             // my.math.calculate - Calculatrice
@@ -375,7 +451,14 @@ class DiscordMyBot {
             response: response,
             options: options,
             embed: null,
-            actions: []
+            actions: [],
+            kickParams: null,
+            banParams: null,
+            dmParams: null,
+            pollParams: null,
+            reactionParams: null,
+            muteParams: null,
+            purgeParams: null
         });
         console.log(`📝 Commande créée: ${this.prefix}${name}`);
     }
@@ -386,6 +469,45 @@ class DiscordMyBot {
             // Exécuter les actions de la commande
             for (const action of command.actions) {
                 await this.interpretLine(action, message);
+            }
+            
+            // Exécuter les actions spécifiques avec paramètres
+            if (command.kickParams) {
+                const target = command.kickParams.target === 'args[0]' ? args[0] : command.kickParams.target;
+                await this.kickMember(message, target, command.kickParams.reason);
+            }
+            
+            if (command.banParams) {
+                const target = command.banParams.target === 'args[0]' ? args[0] : command.banParams.target;
+                await this.banMember(message, target, command.banParams.reason);
+            }
+            
+            if (command.dmParams) {
+                const target = command.dmParams.target === 'args[0]' ? args[0] : command.dmParams.target;
+                let dmMessage = command.dmParams.message;
+                // Remplacer les variables dans le message
+                for (const [key, value] of this.variables.entries()) {
+                    dmMessage = dmMessage.replace(new RegExp(`{${key}}`, 'g'), value);
+                }
+                await this.sendDM(message, target, dmMessage);
+            }
+            
+            if (command.pollParams) {
+                await this.createPoll(message, command.pollParams.question, command.pollParams.options);
+            }
+            
+            if (command.reactionParams) {
+                await message.react(command.reactionParams.emoji);
+            }
+            
+            if (command.muteParams) {
+                const target = command.muteParams.target === 'args[0]' ? args[0] : command.muteParams.target;
+                await this.muteMember(message, target, command.muteParams.duration, command.muteParams.reason);
+            }
+            
+            if (command.purgeParams) {
+                const amount = command.purgeParams.amount === 'args[0]' ? args[0] : command.purgeParams.amount;
+                await this.purgeMessages(message, amount);
             }
             
             // Envoyer l'embed si défini
@@ -685,6 +807,121 @@ class DiscordMyBot {
             default:
                 return now.toLocaleString('fr-FR');
         }
+    }
+    
+    // Obtenir les informations du serveur
+    async getServerInfo(message) {
+        const guild = message.guild;
+        const embed = new EmbedBuilder()
+            .setTitle(`🏰 Informations du serveur: ${guild.name}`)
+            .setDescription(`**ID:** ${guild.id}\n**Propriétaire:** <@${guild.ownerId}>\n**Membres:** ${guild.memberCount}\n**Canaux:** ${guild.channels.cache.size}\n**Rôles:** ${guild.roles.cache.size}\n**Créé le:** ${guild.createdAt.toLocaleDateString('fr-FR')}`)
+            .setColor('#3498db')
+            .setThumbnail(guild.iconURL() || null)
+            .setTimestamp();
+        
+        await message.reply({ embeds: [embed] });
+    }
+    
+    // Obtenir les informations d'un utilisateur
+    async getUserInfo(message, userMention) {
+        let user;
+        if (userMention) {
+            const userId = userMention.replace(/[<@!>]/g, '');
+            user = message.guild.members.cache.get(userId)?.user || message.client.users.cache.get(userId);
+        } else {
+            user = message.author;
+        }
+        
+        if (!user) {
+            await message.reply('❌ Utilisateur introuvable.');
+            return;
+        }
+        
+        const member = message.guild.members.cache.get(user.id);
+        const embed = new EmbedBuilder()
+            .setTitle(`👤 Informations: ${user.tag}`)
+            .setDescription(`**ID:** ${user.id}\n**Créé le:** ${user.createdAt.toLocaleDateString('fr-FR')}\n**A rejoint le:** ${member ? member.joinedAt.toLocaleDateString('fr-FR') : 'N/A'}\n**Bot:** ${user.bot ? 'Oui' : 'Non'}`)
+            .setColor('#e74c3c')
+            .setThumbnail(user.displayAvatarURL())
+            .setTimestamp();
+        
+        await message.reply({ embeds: [embed] });
+    }
+    
+    // Mute un membre
+    async muteMember(message, userMention, duration = '10m', reason = 'Aucune raison spécifiée') {
+        if (!message.member.permissions.has(PermissionsBitField.Flags.ModerateMembers)) {
+            await message.reply('❌ Vous n\'avez pas les permissions pour mute des membres.');
+            return;
+        }
+        
+        const userId = userMention.replace(/[<@!>]/g, '');
+        const member = message.guild.members.cache.get(userId);
+        
+        if (!member) {
+            await message.reply('❌ Membre introuvable.');
+            return;
+        }
+        
+        // Convertir la durée en millisecondes
+        const timeUnits = { 's': 1000, 'm': 60000, 'h': 3600000, 'd': 86400000 };
+        const unit = duration.slice(-1);
+        const time = parseInt(duration.slice(0, -1)) * (timeUnits[unit] || 60000);
+        
+        try {
+            await member.timeout(time, reason);
+            await message.reply(`🔇 ${member.user.tag} a été mute pour ${duration}. Raison: ${reason}`);
+        } catch (error) {
+            await message.reply('❌ Impossible de mute ce membre.');
+        }
+    }
+    
+    // Supprimer des messages
+    async purgeMessages(message, amount = '10') {
+        if (!message.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
+            await message.reply('❌ Vous n\'avez pas les permissions pour supprimer des messages.');
+            return;
+        }
+        
+        const deleteCount = parseInt(amount);
+        if (isNaN(deleteCount) || deleteCount <= 0 || deleteCount > 100) {
+            await message.reply('❌ Veuillez fournir un nombre entre 1 et 100.');
+            return;
+        }
+        
+        try {
+            const messages = await message.channel.messages.fetch({ limit: deleteCount });
+            await message.channel.bulkDelete(messages);
+            
+            const confirmMessage = await message.reply(`🗑️ ${deleteCount} messages supprimés.`);
+            setTimeout(() => confirmMessage.delete().catch(() => {}), 5000);
+        } catch (error) {
+            await message.reply('❌ Erreur lors de la suppression des messages.');
+        }
+    }
+    
+    // Obtenir l'avatar d'un utilisateur
+    async getUserAvatar(message, userMention) {
+        let user;
+        if (userMention) {
+            const userId = userMention.replace(/[<@!>]/g, '');
+            user = message.guild.members.cache.get(userId)?.user || message.client.users.cache.get(userId);
+        } else {
+            user = message.author;
+        }
+        
+        if (!user) {
+            await message.reply('❌ Utilisateur introuvable.');
+            return;
+        }
+        
+        const embed = new EmbedBuilder()
+            .setTitle(`🖼️ Avatar de ${user.tag}`)
+            .setImage(user.displayAvatarURL({ size: 512 }))
+            .setColor('#9b59b6')
+            .setTimestamp();
+        
+        await message.reply({ embeds: [embed] });
     }
 
     // Interpréter un fichier .my
