@@ -1,47 +1,104 @@
 
+
 // Exemple de bot Discord créé avec Discord.my
 // Pour démarrer: maya Discord.my-allume exemple_bot.my
 
 my.console('🚀 Démarrage du bot Discord.my...')
 
 // Connexion du bot (remplacez par votre token)
-my.discord.connect('Votre token')
+my.discord.connect('VOTRE_TOKEN_BOT_ICI')
 
 // Définir le préfixe des commandes
 my.discord.prefix('!')
 
 // Définir le statut du bot
-my.discord.status('playing', 'avec Discord.my', 'online')
+my.discord.status('playing', 'avec Discord.my v2.0', 'online')
 
 // Messages d'erreur personnalisés
 my.discord.error('permission', 'Vous n\'avez pas les permissions nécessaires!')
 my.discord.error('user_not_found', 'Utilisateur introuvable!')
+my.discord.error('calculation_error', 'Erreur dans le calcul!')
 
 // Variables pour le bot
 my.variable serveur_name = 'Mon Super Serveur'
 my.variable admin_role = 'Administrateur'
+my.variable bot_version = '2.0'
+
+// === COMMANDES DE BASE ===
 
 // Commande de salutation simple
-my.discord.command('salut', 'Salut! Je suis un bot créé avec Discord.my! 🤖')
+my.discord.command('salut', 'Salut! Je suis un bot créé avec Discord.my v{bot_version}! 🤖')
 
-// Commande avec embed personnalisé
+// Commande d'aide complète
+my.discord.command('aide', 'embed')
+my.discord.embed('title', '📚 Commandes Discord.my v{bot_version}', 'description', '**🔧 Basiques:**\n`!salut` - Salutation\n`!info` - Infos du bot\n\n**🎲 Aléatoire:**\n`!dice` - Dé 1-100\n`!choice mot1 mot2` - Choix aléatoire\n`!image cats` - Image aléatoire\n\n**🧮 Utilitaires:**\n`!calc 2+2` - Calculatrice\n`!time` - Heure actuelle\n`!poll "Question?" "Option1" "Option2"` - Sondage\n\n**⚔️ Modération:**\n`!kick @user` - Expulser\n`!ban @user` - Bannir\n`!role add @user RoleName` - Gérer rôles', 'color', '#3498db', 'footer', 'Discord.my - Powered by Maya', 'timestamp', 'now')
+
+// Commande avec embed personnalisé et nouvelles fonctionnalités
 my.discord.command('info', 'embed')
-my.discord.embed('title', 'Informations du Bot', 'description', 'Je suis un bot Discord créé avec Discord.my!', 'color', '#00ff00', 'footer', 'Powered by Discord.my', 'thumbnail', 'https://example.com/bot-avatar.png')
+my.discord.embed('title', '🤖 Informations du Bot', 'description', 'Je suis un bot Discord créé avec Discord.my!\n\n**Version:** {bot_version}\n**Serveur:** {serveur_name}\n**Créé avec:** Discord.my (syntaxe Maya)', 'color', '#00ff00', 'footer', 'Powered by Discord.my', 'thumbnail', 'https://cdn.discordapp.com/attachments/123456789/bot-avatar.png', 'author', 'Discord.my Bot', 'timestamp', 'now')
 
-// Commande avec nombre aléatoire
-my.discord.command('dice', 'Voici votre nombre aléatoire:')
+// === COMMANDES ALÉATOIRES AMÉLIORÉES ===
+
+// Commande avec nombre aléatoire (corrigée)
+my.discord.command('dice', 'embed')
 my.random.number(1, 100)
+my.discord.embed('title', '🎲 Lancer de dé', 'description', 'Résultat: **{random}**', 'color', '#ff6b6b', 'footer', 'Dé 1-100')
 
-// Commande d'embed avec informations du serveur
-my.discord.command('serveur', 'embed')
-my.discord.embed('title', 'Informations du Serveur', 'description', 'Nom: {serveur_name}', 'color', '#ff5500', 'footer', 'Discord.my Bot')
+// Choix aléatoire entre plusieurs options
+my.discord.command('choice', 'embed')
+my.random.choice('Oui', 'Non', 'Peut-être', 'Plus tard', 'Jamais')
+my.discord.embed('title', '🎯 Choix aléatoire', 'description', 'Résultat: **{random_choice}**', 'color', '#4ecdc4')
 
-// Commandes de modération (nécessitent des permissions)
-my.discord.command('kick', 'Membre kické avec succès!')
-// Usage: !kick @utilisateur raison
+// Images aléatoires par catégorie
+my.discord.command('image', 'embed')
+my.random.image('cats')
+my.discord.embed('title', '🖼️ Image aléatoire', 'description', 'Catégorie: Chats', 'image', '{random_image}', 'color', '#ff9ff3')
 
+my.discord.command('meme', 'embed')
+my.random.image('memes')
+my.discord.embed('title', '😂 Meme aléatoire', 'image', '{random_image}', 'color', '#feca57')
+
+// === NOUVELLES COMMANDES UTILITAIRES ===
+
+// Calculatrice
+my.discord.command('calc', 'embed')
+my.math.calculate('2+2')
+my.discord.embed('title', '🧮 Calculatrice', 'description', 'Calcul: **{math_result}**', 'color', '#6c5ce7', 'footer', 'Calculatrice Discord.my')
+
+// Heure actuelle
+my.discord.command('time', 'embed')
+my.time.format('full')
+my.discord.embed('title', '⏰ Heure actuelle', 'description', '{current_time}', 'color', '#00b894', 'timestamp', 'now')
+
+// Sondage interactif
+my.discord.command('poll', 'embed')
+my.discord.poll('Question du sondage', 'Option 1', 'Option 2', 'Option 3')
+
+// === COMMANDES DE MODÉRATION AMÉLIORÉES ===
+
+// Kick avec raison
+my.discord.command('kick', 'Membre expulsé avec succès!')
+my.discord.kick()
+
+// Ban avec raison  
 my.discord.command('ban', 'Membre banni avec succès!')
-// Usage: !ban @utilisateur raison
+my.discord.ban()
+
+// Gestion des rôles
+my.discord.command('role', 'Rôle géré avec succès!')
+my.discord.role('add')
+
+// === COMMANDES SOCIALES ===
+
+// Message privé
+my.discord.command('dm', 'Message privé envoyé!')
+my.discord.dm()
+
+// Réaction automatique
+my.discord.command('react', 'Réaction ajoutée!')
+my.discord.reaction('❤️')
 
 my.console('✅ Configuration du bot terminée!')
-my.console('🤖 Bot prêt à fonctionner sur Discord!')
+my.console('🎯 Nouvelles fonctionnalités: images aléatoires, calculatrice, sondages, gestion avancée')
+my.console('🤖 Bot Discord.my v{bot_version} prêt à fonctionner!')
+
