@@ -11,6 +11,7 @@ class DiscordMyBot {
         this.errorMessages = new Map();
         this.token = null;
         this.isConnected = false;
+        this.currentCommand = null;
     }
 
     // Fonction pour gérer les erreurs personnalisées
@@ -60,7 +61,7 @@ class DiscordMyBot {
     }
 
     // Interpréter une ligne de code Discord.my
-    async interpretLine(line, message = null) {
+    async interpretLine(line, message = null, commandContext = null) {
         line = line.trim();
         if (!line || line.startsWith('//')) return;
 
@@ -96,13 +97,20 @@ class DiscordMyBot {
                 const args = this.parseArguments(line);
                 if (args.length >= 2) {
                     this.createCommand(args[0], args[1], args.slice(2));
+                    this.currentCommand = args[0]; // Stocker la commande actuelle
                 }
             }
             
-            // my.discord.embed - Créer un embed
-            else if (line.startsWith('my.discord.embed') && message) {
+            // my.discord.embed - Créer un embed (associé à la dernière commande créée)
+            else if (line.startsWith('my.discord.embed')) {
                 const args = this.parseArguments(line);
-                await this.sendEmbed(message, args);
+                if (this.currentCommand && this.commands.has(this.currentCommand)) {
+                    // Stocker l'embed dans la commande
+                    this.commands.get(this.currentCommand).embed = args;
+                } else if (message) {
+                    // Exécution directe si on a un message
+                    await this.sendEmbed(message, args);
+                }
             }
             
             // my.discord.send - Envoyer un message
@@ -138,7 +146,11 @@ class DiscordMyBot {
                 const max = parseInt(args[1]) || 100;
                 const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
                 this.variables.set('random', randomNum.toString());
-                if (message) {
+                
+                // Si on est dans le contexte d'une commande, stocker l'action
+                if (this.currentCommand && this.commands.has(this.currentCommand)) {
+                    this.commands.get(this.currentCommand).actions.push(line);
+                } else if (message) {
                     await message.reply(`🎲 Nombre aléatoire: ${randomNum}`);
                 }
                 return randomNum;
@@ -150,7 +162,11 @@ class DiscordMyBot {
                 const category = args[0] || 'cats';
                 const imageUrl = await this.getRandomImage(category);
                 this.variables.set('random_image', imageUrl);
-                if (message) {
+                
+                // Si on est dans le contexte d'une commande, stocker l'action
+                if (this.currentCommand && this.commands.has(this.currentCommand)) {
+                    this.commands.get(this.currentCommand).actions.push(line);
+                } else if (message) {
                     const embed = new EmbedBuilder()
                         .setTitle(`🖼️ Image aléatoire: ${category}`)
                         .setImage(imageUrl)
@@ -166,7 +182,11 @@ class DiscordMyBot {
                 if (args.length > 0) {
                     const randomChoice = args[Math.floor(Math.random() * args.length)];
                     this.variables.set('random_choice', randomChoice);
-                    if (message) {
+                    
+                    // Si on est dans le contexte d'une commande, stocker l'action
+                    if (this.currentCommand && this.commands.has(this.currentCommand)) {
+                        this.commands.get(this.currentCommand).actions.push(line);
+                    } else if (message) {
                         await message.reply(`🎯 Choix aléatoire: **${randomChoice}**`);
                     }
                     return randomChoice;
@@ -239,7 +259,11 @@ class DiscordMyBot {
                 if (args.length > 0) {
                     const result = this.calculateMath(args[0]);
                     this.variables.set('math_result', result.toString());
-                    if (message) {
+                    
+                    // Si on est dans le contexte d'une commande, stocker l'action
+                    if (this.currentCommand && this.commands.has(this.currentCommand)) {
+                        this.commands.get(this.currentCommand).actions.push(line);
+                    } else if (message) {
                         await message.reply(`🧮 Résultat: ${args[0]} = **${result}**`);
                     }
                     return result;
@@ -252,7 +276,11 @@ class DiscordMyBot {
                 const format = args[0] || 'full';
                 const time = this.getFormattedTime(format);
                 this.variables.set('current_time', time);
-                if (message) {
+                
+                // Si on est dans le contexte d'une commande, stocker l'action
+                if (this.currentCommand && this.commands.has(this.currentCommand)) {
+                    this.commands.get(this.currentCommand).actions.push(line);
+                } else if (message) {
                     await message.reply(`⏰ Heure actuelle: ${time}`);
                 }
                 return time;
@@ -343,21 +371,40 @@ class DiscordMyBot {
     // Créer une commande
     createCommand(name, response, options = []) {
         this.commands.set(name, {
+            name: name,
             response: response,
-            options: options
+            options: options,
+            embed: null,
+            actions: []
         });
         console.log(`📝 Commande créée: ${this.prefix}${name}`);
     }
 
     // Exécuter une commande
     async executeCommand(command, message, args) {
-        // Remplacer les variables dans la réponse
-        let response = command.response;
-        for (const [key, value] of this.variables.entries()) {
-            response = response.replace(new RegExp(`{${key}}`, 'g'), value);
+        try {
+            // Exécuter les actions de la commande
+            for (const action of command.actions) {
+                await this.interpretLine(action, message);
+            }
+            
+            // Envoyer l'embed si défini
+            if (command.embed) {
+                await this.sendEmbed(message, command.embed);
+            } 
+            // Sinon envoyer la réponse normale
+            else if (command.response && command.response !== 'embed') {
+                let response = command.response;
+                // Remplacer les variables dans la réponse
+                for (const [key, value] of this.variables.entries()) {
+                    response = response.replace(new RegExp(`{${key}}`, 'g'), value);
+                }
+                await message.reply(response);
+            }
+        } catch (error) {
+            console.error(`❌ Erreur lors de l'exécution de la commande ${command.name}:`, error);
+            await message.reply('❌ Une erreur est survenue lors de l\'exécution de la commande.');
         }
-
-        await message.reply(response);
     }
 
     // Envoyer un embed
@@ -422,33 +469,38 @@ class DiscordMyBot {
     
     // Obtenir une image aléatoire depuis une API
     async getRandomImage(category) {
-        const apis = {
-            'cats': 'https://api.thecatapi.com/v1/images/search',
-            'dogs': 'https://api.thedogapi.com/v1/images/search',
-            'foxes': 'https://randomfox.ca/floof/',
-            'memes': 'https://meme-api.herokuapp.com/gimme',
-            'anime': 'https://api.waifu.pics/sfw/neko'
+        const images = {
+            'cats': [
+                'https://cataas.com/cat',
+                'https://cdn2.thecatapi.com/images/9p1.jpg',
+                'https://cdn2.thecatapi.com/images/1sq.jpg'
+            ],
+            'dogs': [
+                'https://dog.ceo/api/img/vizsla/n02100583_10508.jpg',
+                'https://dog.ceo/api/img/hound-english/n02089973_2309.jpg',
+                'https://dog.ceo/api/img/spaniel-brittany/n02101388_5739.jpg'
+            ],
+            'foxes': [
+                'https://randomfox.ca/images/1.jpg',
+                'https://randomfox.ca/images/2.jpg',
+                'https://randomfox.ca/images/3.jpg'
+            ],
+            'memes': [
+                'https://i.imgflip.com/1bij.jpg',
+                'https://i.imgflip.com/30b1gx.jpg',
+                'https://i.imgflip.com/26am.jpg'
+            ],
+            'anime': [
+                'https://cdn.waifu.pics/sfw/neko/1.jpg',
+                'https://cdn.waifu.pics/sfw/neko/2.jpg',
+                'https://cdn.waifu.pics/sfw/neko/3.jpg'
+            ]
         };
         
         try {
-            const fetch = (await import('node-fetch')).default;
-            const url = apis[category.toLowerCase()] || apis.cats;
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            switch (category.toLowerCase()) {
-                case 'cats':
-                case 'dogs':
-                    return data[0]?.url || 'https://via.placeholder.com/400x300?text=Image+not+found';
-                case 'foxes':
-                    return data.image || 'https://via.placeholder.com/400x300?text=Image+not+found';
-                case 'memes':
-                    return data.url || 'https://via.placeholder.com/400x300?text=Image+not+found';
-                case 'anime':
-                    return data.url || 'https://via.placeholder.com/400x300?text=Image+not+found';
-                default:
-                    return 'https://via.placeholder.com/400x300?text=Random+Image';
-            }
+            const categoryImages = images[category.toLowerCase()] || images.cats;
+            const randomIndex = Math.floor(Math.random() * categoryImages.length);
+            return categoryImages[randomIndex];
         } catch (error) {
             console.error('Erreur lors de la récupération d\'image:', error);
             return 'https://via.placeholder.com/400x300?text=Error+loading+image';
@@ -643,8 +695,31 @@ class DiscordMyBot {
             
             console.log(`🚀 Démarrage du bot Discord.my depuis ${filename}`);
             
-            for (const line of lines) {
-                await this.interpretLine(line.trim());
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                await this.interpretLine(line);
+                
+                // Gérer les embeds qui suivent une commande
+                if (line.startsWith('my.discord.command') && i + 1 < lines.length) {
+                    let nextLineIndex = i + 1;
+                    // Chercher les embeds et actions qui suivent
+                    while (nextLineIndex < lines.length) {
+                        const nextLine = lines[nextLineIndex].trim();
+                        if (nextLine.startsWith('my.discord.embed') || 
+                            nextLine.startsWith('my.random.') ||
+                            nextLine.startsWith('my.math.') ||
+                            nextLine.startsWith('my.time.')) {
+                            await this.interpretLine(nextLine);
+                            i = nextLineIndex; // Avancer l'index principal
+                            nextLineIndex++;
+                        } else if (nextLine && !nextLine.startsWith('//') && !nextLine.startsWith('my.discord.command')) {
+                            // Ligne non reconnue, arrêter
+                            break;
+                        } else {
+                            break;
+                        }
+                    }
+                }
             }
             
             // Garder le processus en vie
