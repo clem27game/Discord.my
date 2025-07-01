@@ -1,0 +1,83 @@
+
+# Test complet des nouvelles fonctionnalités Maya v2.0
+
+my.console('🌸 === Tests Maya v2.0 === 🌸')
+
+# Test 1: Variables améliorées avec concaténation
+my.variable nom = 'Maya'
+my.variable version = '2.0'
+my.console('Bienvenue dans le langage ' + nom + ' version ' + version + '!')
+
+# Test 2: Couleurs de console
+my.color.console('PINK')
+my.console('Ce texte est en rose!')
+
+my.color.console('BLUE')
+my.console('Ce texte est en bleu!')
+
+my.color.console('GREEN')
+my.console('Ce texte est en vert!')
+
+my.color.console('DEFAULT')
+
+# Test 3: Délais entre messages
+my.console('Message 1...')
+my.delai(1000)
+my.console('Message 2 après 1 seconde!')
+my.delai(500)
+my.console('Message 3 après 0.5 seconde!')
+
+# Test 4: Dessins ASCII
+my.console('🎨 Voici quelques dessins ASCII:')
+my.draw.heart
+my.delai(500)
+my.draw.tree
+my.delai(500)
+my.draw.dog
+my.delai(500)
+my.draw.horse
+my.delai(500)
+my.draw.goat
+my.draw.pers('--------🍅🛑💚💚🌷🐉🌷🏹🍉🌸🍉🌸🍉🌸🍉🌸🌸🍉🌸🍉🌸🍉-------')
+
+# Test 5: Dessin personnalisé
+my.draw.pers('  ★ Maya ★  ')
+
+# Test 6: Texte stylé
+my.jolie.txt('Maya est fantastique!', 'Style1')
+
+# Test 7: Nombres aléatoires
+my.console('🎲 Génération de nombres aléatoires:')
+my.nombre.random(1, 10)
+my.nombre.random(50, 100)
+
+# Test 8: Texte aléatoire
+my.console('🎭 Sélection de texte aléatoire:')
+my.random.txt('Bonjour', 'Salut', 'Coucou', 'Hello', 'Bonsoir')
+
+# Test 9: Conditions avec variables
+my.variable age = 20
+my.if(age >= 18)
+my.alors {
+    my.color.console('GREEN')
+    my.console('Vous êtes majeur!')
+    my.color.console('DEFAULT')
+}
+my.autre {
+    my.color.console('YELLOW')
+    my.console('Vous êtes mineur!')
+    my.color.console('DEFAULT')
+}
+
+# Test 10: Mathématiques avec variables
+my.variable nombre1 = 15
+my.variable nombre2 = 25
+my.console('Calculs avec variables:')
+my.math.add(nombre1 + nombre2)
+
+my.console('🎉 Tests terminés! Maya v2.0 fonctionne parfaitement! 🎉')
+my.random.txt('Option1', 'Option2', 'Option3')
+my.math.add(5 + 3) # renvoie 8
+my.math.sub(6 - 3) # renvoie 3
+my.math.div(10 / 2) # renvoie 5
+my.math.mult(5 * 2) #renvoie 10
