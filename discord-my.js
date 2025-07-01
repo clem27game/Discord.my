@@ -581,9 +581,6 @@ class DiscordMyBot {
 
             console.log(`💬 ${line}`);
 
-        } catch (error) {
-            console.error(`❌ Erreur lors de l'interprétation de la ligne "${line}":`, error.message);
-        }
     }
 
     // Connexion du bot Discord
