@@ -777,7 +777,7 @@ class DiscordMyBot {
                 case 'footer':
                     embed.setFooter({ text: value });
                     break;
-                case 'image':```tool_code
+                case 'image':`tool_code`
                     embed.setImage(value);
                     break;
                 case 'thumbnail':
