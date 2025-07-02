@@ -116,7 +116,69 @@
 - Rappels personnalisés
 - Gestion des anniversaires
 
-### 🔐 Sécurité Renforcée (v2.0)
+### 🔐 Sécurité Renforcée
 - Gestion des cooldowns
 - Vérification des permissions
 - Messages d'erreur personnalisés
+
+## 🦜 Fonctionnalités Perroquet
+
+### Activation/Désactivation
+```my
+// Activer pour tous les canaux
+my.discord.parrot.enable('all')
+
+// Activer pour des canaux spécifiques
+my.discord.parrot.enable('general', 'chat', 'discussions')
+
+// Désactiver
+my.discord.parrot.disable()
+```
+
+### Configuration Avancée
+```my
+// Exclure les commandes
+my.discord.parrot.config('exclude_commands', 'true')
+
+// Exclure les autres bots
+my.discord.parrot.config('exclude_bots', 'true')
+
+// Ajouter un délai (en secondes)
+my.discord.parrot.config('delay', '3')
+
+// Définir des canaux spécifiques
+my.discord.parrot.config('channels', 'general,chat')
+```
+
+### Personnalisation des Messages
+```my
+// Ajouter un préfixe
+my.discord.parrot.prefix('🦜 Répète:')
+
+// Ajouter un suffixe
+my.discord.parrot.suffix('(par le perroquet)')
+
+// Filtrer certains mots (blacklist)
+my.discord.parrot.filter('spam', 'insulte', 'interdit')
+
+// Ne répéter que certains mots (whitelist)
+my.discord.parrot.only('bonjour', 'merci', 'bravo')
+```
+
+### Exemple Complet
+```my
+my.discord.connect('TOKEN')
+my.discord.prefix('!')
+
+// Configuration du perroquet
+my.discord.parrot.enable('general')
+my.discord.parrot.prefix('🦜')
+my.discord.parrot.config('delay', '1')
+my.discord.parrot.filter('spam', 'test')
+
+// Commandes de contrôle
+my.discord.command('parrot-on', 'Perroquet activé!')
+my.discord.parrot.enable('all')
+
+my.discord.command('parrot-off', 'Perroquet désactivé!')
+my.discord.parrot.disable()

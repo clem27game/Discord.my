@@ -1,5 +1,3 @@
-
-
 // Exemple de bot Discord créé avec Discord.my
 // Pour démarrer: maya Discord.my-allume exemple_bot.my
 
@@ -201,8 +199,43 @@ my.discord.command('achievement', 'embed')
 my.community.achievement()
 my.discord.embed('title', '🎉 Accomplissement', 'description', '{new_achievement}', 'color', '#ff1493')
 
+// === FONCTIONNALITÉS PERROQUET ===
+
+// Activer le mode perroquet pour tous les canaux
+my.discord.command('parrot-on', 'Mode Perroquet activé! 🦜')
+my.discord.parrot.enable('all')
+
+// Activer le mode perroquet pour des canaux spécifiques
+my.discord.command('parrot-channel', 'Mode Perroquet activé pour ce canal! 🦜')
+my.discord.parrot.enable('general', 'chat')
+
+// Désactiver le mode perroquet
+my.discord.command('parrot-off', 'Mode Perroquet désactivé! 🤫')
+my.discord.parrot.disable()
+
+// Configuration avancée du perroquet
+my.discord.command('parrot-config', 'Configuration Perroquet mise à jour! ⚙️')
+my.discord.parrot.config('exclude_bots', 'true')
+my.discord.parrot.config('delay', '2')
+
+// Ajouter un préfixe aux messages répétés
+my.discord.command('parrot-prefix', 'Préfixe Perroquet défini! 🏷️')
+my.discord.parrot.prefix('🦜 Répète:')
+
+// Ajouter un suffixe aux messages répétés
+my.discord.command('parrot-suffix', 'Suffixe Perroquet défini! 🏷️')
+my.discord.parrot.suffix('(répété par le bot)')
+
+// Filtrer certains mots
+my.discord.command('parrot-filter', 'Filtre Perroquet activé! 🚫')
+my.discord.parrot.filter('spam', 'bot', 'test')
+
+// Ne répéter que certains mots
+my.discord.command('parrot-only', 'Liste blanche Perroquet activée! ✅')
+my.discord.parrot.only('bonjour', 'merci', 'bravo')
+
 my.console('✅ Configuration du bot terminée!')
 my.console('🚀 70 NOUVELLES FONCTIONNALITÉS ajoutées!')
-my.console('🎯 Catégories: Économie, Jeux, IA, Social, Productivité, Divertissement, Sécurité, Analytics, Intégrations, Utilitaires, Notifications, Thèmes, Éducation, Wellness, Art, Communauté')
+my.console('🦜 FONCTIONNALITÉ PERROQUET ajoutée!')
+my.console('🎯 Catégories: Économie, Jeux, IA, Social, Productivité, Divertissement, Sécurité, Analytics, Intégrations, Utilitaires, Notifications, Thèmes, Éducation, Wellness, Art, Communauté, Perroquet')
 my.console('🤖 Bot Discord.my v{bot_version} avec toutes les nouvelles fonctionnalités prêt à l\'action!')
-

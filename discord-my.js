@@ -12,6 +12,17 @@ class DiscordMyBot {
         this.token = null;
         this.isConnected = false;
         this.currentCommand = null;
+        this.parrotConfig = {
+            enabled: false,
+            channels: ['all'],
+            excludeCommands: true,
+            excludeBots: true,
+            delay: 0,
+            prefix: '',
+            suffix: '',
+            blacklist: [],
+            whitelist: []
+        };
     }
 
     // Fonction pour gérer les erreurs personnalisées
@@ -1191,6 +1202,105 @@ class DiscordMyBot {
                 this.variables.set('new_achievement', achievements[Math.floor(Math.random() * achievements.length)]);
             }
 
+            // === FONCTIONNALITÉ PERROQUET ===
+
+            // my.discord.parrot.enable - Activer le mode perroquet
+            else if (line.startsWith('my.discord.parrot.enable')) {
+                const args = this.parseArguments(line);
+                const channels = args.length > 0 ? args : ['all'];
+                this.parrotConfig = {
+                    enabled: true,
+                    channels: channels,
+                    excludeCommands: true,
+                    excludeBots: true,
+                    delay: 0
+                };
+                console.log(`🦜 Mode Perroquet activé pour les canaux: ${channels.join(', ')}`);
+            }
+
+            // my.discord.parrot.disable - Désactiver le mode perroquet
+            else if (line.startsWith('my.discord.parrot.disable')) {
+                this.parrotConfig = { enabled: false };
+                console.log('🦜 Mode Perroquet désactivé');
+            }
+
+            // my.discord.parrot.config - Configuration avancée du perroquet
+            else if (line.startsWith('my.discord.parrot.config')) {
+                const args = this.parseArguments(line);
+                if (args.length >= 2) {
+                    const setting = args[0];
+                    const value = args[1];
+                    
+                    if (!this.parrotConfig) {
+                        this.parrotConfig = { enabled: false, channels: ['all'], excludeCommands: true, excludeBots: true, delay: 0 };
+                    }
+                    
+                    switch (setting) {
+                        case 'exclude_commands':
+                            this.parrotConfig.excludeCommands = value === 'true';
+                            break;
+                        case 'exclude_bots':
+                            this.parrotConfig.excludeBots = value === 'true';
+                            break;
+                        case 'delay':
+                            this.parrotConfig.delay = parseInt(value) || 0;
+                            break;
+                        case 'channels':
+                            this.parrotConfig.channels = value.split(',').map(c => c.trim());
+                            break;
+                    }
+                    console.log(`🦜 Configuration Perroquet mise à jour: ${setting} = ${value}`);
+                }
+            }
+
+            // my.discord.parrot.prefix - Ajouter un préfixe aux messages répétés
+            else if (line.startsWith('my.discord.parrot.prefix')) {
+                const args = this.parseArguments(line);
+                if (args.length > 0) {
+                    if (!this.parrotConfig) {
+                        this.parrotConfig = { enabled: false, channels: ['all'], excludeCommands: true, excludeBots: true, delay: 0 };
+                    }
+                    this.parrotConfig.prefix = args[0];
+                    console.log(`🦜 Préfixe Perroquet défini: ${args[0]}`);
+                }
+            }
+
+            // my.discord.parrot.suffix - Ajouter un suffixe aux messages répétés
+            else if (line.startsWith('my.discord.parrot.suffix')) {
+                const args = this.parseArguments(line);
+                if (args.length > 0) {
+                    if (!this.parrotConfig) {
+                        this.parrotConfig = { enabled: false, channels: ['all'], excludeCommands: true, excludeBots: true, delay: 0 };
+                    }
+                    this.parrotConfig.suffix = args[0];
+                    console.log(`🦜 Suffixe Perroquet défini: ${args[0]}`);
+                }
+            }
+
+            // my.discord.parrot.filter - Filtrer certains mots ou expressions
+            else if (line.startsWith('my.discord.parrot.filter')) {
+                const args = this.parseArguments(line);
+                if (args.length > 0) {
+                    if (!this.parrotConfig) {
+                        this.parrotConfig = { enabled: false, channels: ['all'], excludeCommands: true, excludeBots: true, delay: 0 };
+                    }
+                    this.parrotConfig.blacklist = args;
+                    console.log(`🦜 Filtre Perroquet défini: ${args.join(', ')}`);
+                }
+            }
+
+            // my.discord.parrot.only - Ne répéter que certains mots ou expressions
+            else if (line.startsWith('my.discord.parrot.only')) {
+                const args = this.parseArguments(line);
+                if (args.length > 0) {
+                    if (!this.parrotConfig) {
+                        this.parrotConfig = { enabled: false, channels: ['all'], excludeCommands: true, excludeBots: true, delay: 0 };
+                    }
+                    this.parrotConfig.whitelist = args;
+                    console.log(`🦜 Liste blanche Perroquet définie: ${args.join(', ')}`);
+                }
+            }
+
             console.log(`💬 ${line}`);
 
         } catch (error) {
@@ -1221,6 +1331,11 @@ class DiscordMyBot {
         });
 
         this.client.on('messageCreate', async (message) => {
+            // Gestion du mode Perroquet
+            if (this.parrotConfig.enabled && !message.author.bot) {
+                await this.handleParrotMessage(message);
+            }
+
             if (message.author.bot || !message.content.startsWith(this.prefix)) return;
 
             const args = message.content.slice(this.prefix.length).trim().split(/ +/);
@@ -1881,6 +1996,79 @@ class DiscordMyBot {
         const mDisplay = m > 0 ? m + (m === 1 ? " minute, " : " minutes, ") : "";
         const sDisplay = s > 0 ? s + (s === 1 ? " seconde" : " secondes") : "";
         return dDisplay + hDisplay + mDisplay + sDisplay;
+    }
+
+    // Gérer les messages en mode Perroquet
+    async handleParrotMessage(message) {
+        try {
+            // Vérifier si le bot doit exclure ses propres messages
+            if (this.parrotConfig.excludeBots && message.author.bot) {
+                return;
+            }
+
+            // Vérifier si le message est une commande et si on doit l'exclure
+            if (this.parrotConfig.excludeCommands && message.content.startsWith(this.prefix)) {
+                return;
+            }
+
+            // Vérifier si le canal est autorisé
+            const channelName = message.channel.name;
+            const channelId = message.channel.id;
+            
+            if (!this.parrotConfig.channels.includes('all') && 
+                !this.parrotConfig.channels.includes(channelName) && 
+                !this.parrotConfig.channels.includes(channelId)) {
+                return;
+            }
+
+            let messageContent = message.content;
+
+            // Vérifier la liste noire (blacklist)
+            if (this.parrotConfig.blacklist && this.parrotConfig.blacklist.length > 0) {
+                const hasBlacklistedWord = this.parrotConfig.blacklist.some(word => 
+                    messageContent.toLowerCase().includes(word.toLowerCase())
+                );
+                if (hasBlacklistedWord) {
+                    return;
+                }
+            }
+
+            // Vérifier la liste blanche (whitelist)
+            if (this.parrotConfig.whitelist && this.parrotConfig.whitelist.length > 0) {
+                const hasWhitelistedWord = this.parrotConfig.whitelist.some(word => 
+                    messageContent.toLowerCase().includes(word.toLowerCase())
+                );
+                if (!hasWhitelistedWord) {
+                    return;
+                }
+            }
+
+            // Ne pas répéter les messages vides
+            if (!messageContent.trim()) {
+                return;
+            }
+
+            // Ajouter le préfixe et suffixe si définis
+            if (this.parrotConfig.prefix) {
+                messageContent = this.parrotConfig.prefix + ' ' + messageContent;
+            }
+            if (this.parrotConfig.suffix) {
+                messageContent = messageContent + ' ' + this.parrotConfig.suffix;
+            }
+
+            // Appliquer le délai si défini
+            if (this.parrotConfig.delay > 0) {
+                await new Promise(resolve => setTimeout(resolve, this.parrotConfig.delay * 1000));
+            }
+
+            // Répéter le message
+            await message.channel.send(messageContent);
+
+            console.log(`🦜 Message répété dans #${channelName}: "${messageContent}"`);
+
+        } catch (error) {
+            console.error('❌ Erreur dans le mode Perroquet:', error);
+        }
     }
 }
 
