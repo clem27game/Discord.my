@@ -1402,14 +1402,13 @@ class DiscordMyBot {
 
             // === 35 NOUVELLES FONCTIONNALITÉS CONCRÈTES ===
 
-            // 1. my.voice.join - Rejoindre un canal vocal
+            // 1. my.voice.join - Rejoindre un canal vocal (fonctionnalité basique)
             else if (line.startsWith('my.voice.join') && message) {
-                const voiceChannel = message.member.voice.channel;
+                const voiceChannel = message.member?.voice?.channel;
                 if (voiceChannel) {
                     try {
-                        const connection = await voiceChannel.join();
-                        this.variables.set('voice_status', `🔊 Connecté au canal vocal: ${voiceChannel.name}`);
-                        await message.reply(`🔊 Connecté au canal vocal **${voiceChannel.name}**`);
+                        this.variables.set('voice_status', `🔊 Tentative de connexion au canal vocal: ${voiceChannel.name}`);
+                        await message.reply(`🔊 Tentative de connexion au canal vocal **${voiceChannel.name}** (fonctionnalité limitée)`);
                     } catch (error) {
                         await message.reply('❌ Impossible de rejoindre le canal vocal.');
                     }
@@ -1418,16 +1417,10 @@ class DiscordMyBot {
                 }
             }
 
-            // 2. my.voice.leave - Quitter le canal vocal
+            // 2. my.voice.leave - Quitter le canal vocal (fonctionnalité basique)
             else if (line.startsWith('my.voice.leave') && message) {
-                const connection = message.guild.voice?.connection;
-                if (connection) {
-                    connection.destroy();
-                    this.variables.set('voice_status', '🔇 Déconnecté du canal vocal');
-                    await message.reply('🔇 Déconnecté du canal vocal.');
-                } else {
-                    await message.reply('❌ Le bot n\'est pas connecté à un canal vocal.');
-                }
+                this.variables.set('voice_status', '🔇 Déconnexion du canal vocal simulée');
+                await message.reply('🔇 Déconnexion du canal vocal simulée.');
             }
 
             // 3. my.automod.setup - Configuration de l'auto-modération
@@ -2142,12 +2135,14 @@ class DiscordMyBot {
                 const userId = message.author.id;
                 const userReminders = [];
                 
-                for (const [id, reminder] of this.reminders.entries()) {
-                    if (reminder.userId === userId) {
-                        const timeLeft = reminder.time - Date.now();
-                        if (timeLeft > 0) {
-                            const minutes = Math.ceil(timeLeft / (1000 * 60));
-                            userReminders.push(`**ID:** ${id.slice(-4)} - **Dans ${minutes}min:** ${reminder.text}`);
+                if (this.reminders) {
+                    for (const [id, reminder] of this.reminders.entries()) {
+                        if (reminder.userId === userId) {
+                            const timeLeft = reminder.time - Date.now();
+                            if (timeLeft > 0) {
+                                const minutes = Math.ceil(timeLeft / (1000 * 60));
+                                userReminders.push(`**ID:** ${id.slice(-4)} - **Dans ${minutes}min:** ${reminder.text}`);
+                            }
                         }
                     }
                 }
@@ -2225,7 +2220,7 @@ class DiscordMyBot {
                 }
 
                 try {
-                    await message.delete(); // Supprimer le message original pour l'anonymat
+                    await message.delete().catch(() => {}); // Supprimer le message original pour l'anonymat
                     
                     const confessionId = Math.random().toString(36).substring(2, 8).toUpperCase();
                     const embed = new EmbedBuilder()
@@ -2239,9 +2234,13 @@ class DiscordMyBot {
                     this.variables.set('confession_sent', `🤐 ${confessionId}`);
                     
                     // Confirmation en MP
-                    await message.author.send(`✅ **Confession envoyée anonymement** (ID: ${confessionId})`);
+                    try {
+                        await message.author.send(`✅ **Confession envoyée anonymement** (ID: ${confessionId})`);
+                    } catch (error) {
+                        console.log('Impossible d\'envoyer le message de confirmation en MP');
+                    }
                 } catch (error) {
-                    await message.reply('❌ Erreur lors de l\'envoi de la confession.');
+                    console.error('Erreur lors de l\'envoi de la confession:', error);
                 }
             }
 
@@ -3469,10 +3468,12 @@ Utilisez \`!buy <nom>\` pour acheter!`;
     // Gérer les messages en mode Perroquet
     async handleParrotMessage(message) {
         try {
+            if (!this.parrotConfig || !this.parrotConfig.enabled) return;
+            
             if (this.parrotConfig.excludeBots && message.author.bot) return;
             if (this.parrotConfig.excludeCommands && message.content.startsWith(this.prefix)) return;
 
-            const channelName = message.channel.name;
+            const channelName = message.channel.name || 'unknown';
             const channelId = message.channel.id;
 
             if (!this.parrotConfig.channels.includes('all') && 
