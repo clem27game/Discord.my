@@ -1,7 +1,12 @@
 const { Client, GatewayIntentBits, EmbedBuilder, PermissionsBitField, ChannelType, ActivityType } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const fetch = require('node-fetch');
+// Import dynamique de node-fetch pour la compatibilité ESM
+let fetch;
+(async () => {
+    const nodeFetch = await import('node-fetch');
+    fetch = nodeFetch.default;
+})();
 
 class DiscordMyBot {
     constructor() {
@@ -2359,6 +2364,11 @@ class DiscordMyBot {
     // API météo réelle
     async getRealWeather(city) {
         try {
+            // S'assurer que fetch est initialisé
+            if (!fetch) {
+                const nodeFetch = await import('node-fetch');
+                fetch = nodeFetch.default;
+            }
             const apiKey = process.env.WEATHER_API_KEY || 'demo_key';
             const response = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=fr`);
 
@@ -2381,6 +2391,11 @@ class DiscordMyBot {
     // Images aléatoires avec vraies APIs
     async getRealRandomImage(category) {
         try {
+            // S'assurer que fetch est initialisé
+            if (!fetch) {
+                const nodeFetch = await import('node-fetch');
+                fetch = nodeFetch.default;
+            }
             switch (category.toLowerCase()) {
                 case 'cats':
                     const catResponse = await fetch('https://api.thecatapi.com/v1/images/search');
@@ -2409,6 +2424,11 @@ class DiscordMyBot {
     // Traduction réelle (utilise une API gratuite ou LibreTranslate)
     async realTranslate(text, fromLang, toLang) {
         try {
+            // S'assurer que fetch est initialisé
+            if (!fetch) {
+                const nodeFetch = await import('node-fetch');
+                fetch = nodeFetch.default;
+            }
             // Utilisation d'une API de traduction gratuite
             const response = await fetch('https://api.mymemory.translated.net/get', {
                 method: 'GET',
@@ -2617,6 +2637,11 @@ Utilisez \`!buy <nom>\` pour acheter!`;
     // Raccourcisseur d'URL réel
     async shortenUrl(url) {
         try {
+            // S'assurer que fetch est initialisé
+            if (!fetch) {
+                const nodeFetch = await import('node-fetch');
+                fetch = nodeFetch.default;
+            }
             // Utilisation d'un service gratuit comme TinyURL
             const response = await fetch(`http://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
             const shortUrl = await response.text();
