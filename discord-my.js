@@ -739,7 +739,7 @@ class DiscordMyBot {
                 const args = this.parseArguments(line);
                 const encoded = args[0] || '';
                 try {
-                    this.variables.set('base64_decoded', Buffer.from(encoded, 'base64').toString('utf8));
+                    this.variables.set('base64_decoded', Buffer.from(encoded, 'base64').toString('utf8'));
                 } catch (error) {
                     this.variables.set('base64_decoded', 'Erreur de décodage');
                 }
