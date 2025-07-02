@@ -132,67 +132,21 @@ my.time.hour()        // Heure seulement
 my.discord.command('time', 'Il est actuellement: {time_now}')
 ```
 
-### Modération Avancée
+# ⬇️ Sondages interactifs
 
-```my
-// Kick avec paramètres personnalisés
-my.discord.command('kick', 'Membre expulsé!')
-my.discord.kick('@user', 'Comportement inapproprié')
-
-// Ban avec durée et raison
-my.discord.command('ban', 'Membre banni!')
-my.discord.ban('@user', 'Spam répété')
-
-// Mute temporaire
-my.discord.command('mute', 'Membre mis en sourdine!')
-my.discord.mute('@user', '10m', 'Timeout')
-
-// Purge de messages
-my.discord.command('purge', 'Messages supprimés!')
-my.discord.purge('10')
-
-// Gestion des rôles
-my.discord.command('role', 'Rôle attribué!')
-my.discord.role('@user', 'add', 'Membre')
 ```
-
-### Fonctionnalités Sociales
-
-```my
-// Messages privés
-my.discord.command('dm', 'Message privé envoyé!')
-my.discord.dm('@user', 'Voici ton message privé!')
-
-// Sondages interactifs
 my.discord.command('poll', 'embed')
 my.discord.poll('Question du sondage?', 'Option 1', 'Option 2', 'Option 3', 'Option 4')
 
-// Réactions automatiques
+```
+# 🐍 Réactions automatiques
+
+```
 my.discord.command('react', 'Réaction ajoutée!')
 my.discord.react('👍', '👎', '❤️')
 ```
 
-### Informations Serveur et Utilisateur
-
-```my
-// Informations du serveur
-my.discord.command('server', 'embed')
-my.discord.server()
-
-// Informations utilisateur
-my.discord.command('userinfo', 'embed')
-my.discord.user.info('@user')
-
-// Avatar d'un utilisateur
-my.discord.command('avatar', 'embed')
-my.discord.avatar('@user')
-
-// Statistiques du bot
-my.discord.command('stats', 'embed')
-my.discord.stats()
-```
-
-### Messages d'Erreur Personnalisés
+### 🌸 Messages d'Erreur Personnalisés 🌸
 
 ```my
 my.discord.error('permission', 'Vous n\'avez pas les permissions!')
@@ -300,25 +254,6 @@ my.discord.command('info', 'embed')
 my.discord.embed('title', '{bot_name}', 'description', 'Bot créé avec Discord.my', 'color', '#00ff00')
 ```
 
-### Bot de Modération
-
-```my
-my.discord.connect('VOTRE_TOKEN')
-my.discord.prefix('>')
-
-my.discord.error('no_perm', 'Permissions insuffisantes!')
-my.discord.error('user_not_found', 'Utilisateur introuvable!')
-
-my.discord.command('kick', 'Membre expulsé!')
-my.discord.kick('@user', 'Violation des règles')
-
-my.discord.command('ban', 'Membre banni!')
-my.discord.ban('@user', 'Comportement toxique')
-
-my.discord.command('purge', 'Messages supprimés!')
-my.discord.purge('10')
-```
-
 ### Bot de Divertissement
 
 ```my
@@ -360,19 +295,10 @@ my.game.coinflip()
 | `my.math.add()` | Addition | `my.math.add(5, 3)` |
 | `my.time.now()` | Heure actuelle | `my.time.now()` |
 
-### Modération
-| Commande | Description | Exemple |
-|----------|-------------|---------|
-| `my.discord.kick()` | Kick un membre | `my.discord.kick('@user', 'raison')` |
-| `my.discord.ban()` | Ban un membre | `my.discord.ban('@user', 'raison')` |
-| `my.discord.mute()` | Mute un membre | `my.discord.mute('@user', '10m')` |
-| `my.discord.purge()` | Supprimer messages | `my.discord.purge('10')` |
-
 ### Fonctionnalités Sociales
 | Commande | Description | Exemple |
 |----------|-------------|---------|
 | `my.discord.poll()` | Créer un sondage | `my.discord.poll('Question?', 'A', 'B')` |
-| `my.discord.dm()` | Message privé | `my.discord.dm('@user', 'message')` |
 | `my.discord.react()` | Ajouter réactions | `my.discord.react('👍', '👎')` |
 
 ### Utilitaires et Jeux
