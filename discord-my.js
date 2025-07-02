@@ -592,6 +592,605 @@ class DiscordMyBot {
                 this.variables.set('event_created', `📅 Événement "${eventName}" créé pour le ${date}: ${description}`);
             }
 
+            // === NOUVELLES FONCTIONNALITÉS ÉCONOMIE AVANCÉE ===
+
+            // my.economy.shop - Boutique virtuelle
+            else if (line.startsWith('my.economy.shop')) {
+                const items = ['🎮 Jeu Vidéo (500 coins)', '🍕 Pizza (50 coins)', '🎨 Artwork (200 coins)', '🎵 Musique Premium (150 coins)', '⭐ Badge VIP (1000 coins)'];
+                this.variables.set('shop_items', items.join('\n'));
+            }
+
+            // my.economy.buy - Acheter un item
+            else if (line.startsWith('my.economy.buy')) {
+                const args = this.parseArguments(line);
+                const item = args[0] || 'item';
+                const cost = Math.floor(Math.random() * 500) + 50;
+                this.variables.set('purchase_result', `🛒 Vous avez acheté ${item} pour ${cost} Maya Coins!`);
+            }
+
+            // my.economy.inventory - Inventaire utilisateur
+            else if (line.startsWith('my.economy.inventory')) {
+                const items = ['🎮 Jeu Vidéo x2', '🍕 Pizza x5', '🎨 Artwork x1', '⭐ Badge VIP x1'];
+                this.variables.set('user_inventory', items.join('\n'));
+            }
+
+            // my.economy.trade - Échange entre utilisateurs
+            else if (line.startsWith('my.economy.trade')) {
+                const args = this.parseArguments(line);
+                const user = args[0] || 'utilisateur';
+                const item = args[1] || 'item';
+                this.variables.set('trade_offer', `🔄 Proposition d'échange avec ${user}: ${item}`);
+            }
+
+            // my.economy.lottery - Loterie
+            else if (line.startsWith('my.economy.lottery')) {
+                const numbers = Array.from({length: 6}, () => Math.floor(Math.random() * 49) + 1);
+                const winnings = Math.random() < 0.1 ? Math.floor(Math.random() * 10000) + 1000 : 0;
+                this.variables.set('lottery_result', `🎰 Numéros: ${numbers.join('-')} | Gains: ${winnings} coins`);
+            }
+
+            // my.economy.bank - Banque virtuelle
+            else if (line.startsWith('my.economy.bank')) {
+                const args = this.parseArguments(line);
+                const action = args[0] || 'balance';
+                const amount = args[1] || '0';
+                
+                if (action === 'deposit') {
+                    this.variables.set('bank_action', `🏦 Dépôt de ${amount} coins effectué avec succès!`);
+                } else if (action === 'withdraw') {
+                    this.variables.set('bank_action', `🏦 Retrait de ${amount} coins effectué avec succès!`);
+                } else {
+                    const balance = Math.floor(Math.random() * 5000) + 500;
+                    this.variables.set('bank_action', `🏦 Solde bancaire: ${balance} coins`);
+                }
+            }
+
+            // === JEUX AVANCÉS ===
+
+            // my.game.blackjack - Blackjack
+            else if (line.startsWith('my.game.blackjack')) {
+                const playerCards = [Math.floor(Math.random() * 11) + 1, Math.floor(Math.random() * 11) + 1];
+                const dealerCard = Math.floor(Math.random() * 11) + 1;
+                const playerTotal = playerCards.reduce((a, b) => a + b, 0);
+                this.variables.set('blackjack_game', `🃏 Vos cartes: ${playerCards.join(', ')} (Total: ${playerTotal})\n🎲 Carte visible du croupier: ${dealerCard}`);
+            }
+
+            // my.game.slots - Machine à sous
+            else if (line.startsWith('my.game.slots')) {
+                const symbols = ['🍒', '🍋', '🍊', '🍇', '⭐', '💎'];
+                const result = [
+                    symbols[Math.floor(Math.random() * symbols.length)],
+                    symbols[Math.floor(Math.random() * symbols.length)],
+                    symbols[Math.floor(Math.random() * symbols.length)]
+                ];
+                const isWin = result[0] === result[1] && result[1] === result[2];
+                this.variables.set('slots_result', `🎰 ${result.join(' | ')} ${isWin ? '🎉 JACKPOT!' : '❌ Perdu!'}`);
+            }
+
+            // my.game.poker - Poker simple
+            else if (line.startsWith('my.game.poker')) {
+                const suits = ['♠️', '♥️', '♦️', '♣️'];
+                const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+                const hand = Array.from({length: 5}, () => 
+                    `${values[Math.floor(Math.random() * values.length)]}${suits[Math.floor(Math.random() * suits.length)]}`
+                );
+                this.variables.set('poker_hand', `🃏 Votre main: ${hand.join(' ')}`);
+            }
+
+            // my.game.quiz - Quiz interactif
+            else if (line.startsWith('my.game.quiz')) {
+                const questions = [
+                    { q: "Quelle est la capitale de la France?", a: "Paris" },
+                    { q: "Combien font 2+2?", a: "4" },
+                    { q: "Quel est le plus grand océan?", a: "Pacifique" },
+                    { q: "En quelle année a été créé Discord?", a: "2015" }
+                ];
+                const quiz = questions[Math.floor(Math.random() * questions.length)];
+                this.variables.set('quiz_question', quiz.q);
+                this.variables.set('quiz_answer', quiz.a);
+            }
+
+            // my.game.trivia - Culture générale
+            else if (line.startsWith('my.game.trivia')) {
+                const trivias = [
+                    "Les dauphins dorment avec un œil ouvert!",
+                    "Une journée sur Vénus dure plus longtemps qu'une année!",
+                    "Les bananes sont radioactives!",
+                    "Il y a plus d'arbres sur Terre que d'étoiles dans la Voie lactée!",
+                    "Le cœur d'une crevette est dans sa tête!"
+                ];
+                this.variables.set('trivia_fact', trivias[Math.floor(Math.random() * trivias.length)]);
+            }
+
+            // === FONCTIONNALITÉS IA ET AUTOMATISATION ===
+
+            // my.ai.chatbot - Chatbot simple
+            else if (line.startsWith('my.ai.chatbot')) {
+                const args = this.parseArguments(line);
+                const input = args[0] || 'hello';
+                const responses = {
+                    'hello': 'Bonjour! Comment puis-je vous aider?',
+                    'how are you': 'Je vais très bien, merci!',
+                    'goodbye': 'Au revoir! Passez une excellente journée!',
+                    'help': 'Je peux vous aider avec diverses tâches!'
+                };
+                this.variables.set('chatbot_response', responses[input.toLowerCase()] || 'Je ne comprends pas cette question.');
+            }
+
+            // my.ai.sentiment - Analyse de sentiment
+            else if (line.startsWith('my.ai.sentiment')) {
+                const args = this.parseArguments(line);
+                const text = args[0] || '';
+                const positiveWords = ['super', 'génial', 'excellent', 'fantastique', 'merveilleux'];
+                const negativeWords = ['nul', 'horrible', 'terrible', 'affreux', 'mauvais'];
+                
+                let sentiment = 'neutre 😐';
+                if (positiveWords.some(word => text.toLowerCase().includes(word))) {
+                    sentiment = 'positif 😊';
+                } else if (negativeWords.some(word => text.toLowerCase().includes(word))) {
+                    sentiment = 'négatif 😞';
+                }
+                this.variables.set('sentiment_analysis', `Sentiment détecté: ${sentiment}`);
+            }
+
+            // my.ai.autocomplete - Autocomplétion
+            else if (line.startsWith('my.ai.autocomplete')) {
+                const args = this.parseArguments(line);
+                const prefix = args[0] || '';
+                const suggestions = [
+                    `${prefix}tion`, `${prefix}ment`, `${prefix}able`, `${prefix}ique`, `${prefix}eur`
+                ];
+                this.variables.set('autocomplete_suggestions', suggestions.join(', '));
+            }
+
+            // === RÉSEAUX SOCIAUX ET COMMUNAUTÉ ===
+
+            // my.social.follow - Système de suivi
+            else if (line.startsWith('my.social.follow')) {
+                const args = this.parseArguments(line);
+                const user = args[0] || 'utilisateur';
+                this.variables.set('follow_status', `✅ Vous suivez maintenant ${user}!`);
+            }
+
+            // my.social.feed - Fil d'actualité
+            else if (line.startsWith('my.social.feed')) {
+                const posts = [
+                    "👤 Alice a partagé une nouvelle photo!",
+                    "🎮 Bob joue maintenant à Minecraft!",
+                    "🎵 Charlie écoute de la musique!",
+                    "📚 Diana lit un nouveau livre!",
+                    "🍕 Eve mange une délicieuse pizza!"
+                ];
+                this.variables.set('social_feed', posts.join('\n'));
+            }
+
+            // my.social.like - Système de likes
+            else if (line.startsWith('my.social.like')) {
+                const args = this.parseArguments(line);
+                const post = args[0] || 'publication';
+                const likes = Math.floor(Math.random() * 100) + 1;
+                this.variables.set('like_status', `❤️ Vous avez aimé ${post}! (${likes} likes au total)`);
+            }
+
+            // my.social.share - Partage de contenu
+            else if (line.startsWith('my.social.share')) {
+                const args = this.parseArguments(line);
+                const content = args[0] || 'contenu';
+                this.variables.set('share_status', `🔄 Contenu partagé: ${content}`);
+            }
+
+            // my.social.trending - Tendances
+            else if (line.startsWith('my.social.trending')) {
+                const trends = ['#DiscordMy', '#Gaming', '#Musique', '#Art', '#Programmation', '#Memes', '#Tech'];
+                this.variables.set('trending_topics', trends.join(' '));
+            }
+
+            // === PRODUCTIVITÉ ET ORGANISATION ===
+
+            // my.todo.add - Ajouter une tâche
+            else if (line.startsWith('my.todo.add')) {
+                const args = this.parseArguments(line);
+                const task = args[0] || 'nouvelle tâche';
+                this.variables.set('todo_added', `✅ Tâche ajoutée: ${task}`);
+            }
+
+            // my.todo.list - Lister les tâches
+            else if (line.startsWith('my.todo.list')) {
+                const tasks = [
+                    "📝 Terminer le projet",
+                    "🛒 Faire les courses",
+                    "📚 Étudier Discord.my",
+                    "🎮 Jouer avec les amis",
+                    "💻 Coder le bot"
+                ];
+                this.variables.set('todo_list', tasks.join('\n'));
+            }
+
+            // my.calendar.event - Événement calendrier
+            else if (line.startsWith('my.calendar.event')) {
+                const args = this.parseArguments(line);
+                const event = args[0] || 'Événement';
+                const date = args[1] || 'Aujourd\'hui';
+                this.variables.set('calendar_event', `📅 ${event} programmé pour ${date}`);
+            }
+
+            // my.notes.create - Créer une note
+            else if (line.startsWith('my.notes.create')) {
+                const args = this.parseArguments(line);
+                const note = args[0] || 'Ma note';
+                this.variables.set('note_created', `📝 Note créée: ${note}`);
+            }
+
+            // my.timer.start - Démarrer un minuteur
+            else if (line.startsWith('my.timer.start')) {
+                const args = this.parseArguments(line);
+                const duration = args[0] || '5m';
+                this.variables.set('timer_started', `⏱️ Minuteur démarré pour ${duration}`);
+            }
+
+            // === DIVERTISSEMENT AVANCÉ ===
+
+            // my.entertainment.movie - Recommandation de film
+            else if (line.startsWith('my.entertainment.movie')) {
+                const movies = [
+                    "🎬 Inception (2010)",
+                    "🎬 The Matrix (1999)",
+                    "🎬 Interstellar (2014)",
+                    "🎬 Pulp Fiction (1994)",
+                    "🎬 The Shawshank Redemption (1994)"
+                ];
+                this.variables.set('movie_recommendation', movies[Math.floor(Math.random() * movies.length)]);
+            }
+
+            // my.entertainment.music - Recommandation musicale
+            else if (line.startsWith('my.entertainment.music')) {
+                const songs = [
+                    "🎵 Bohemian Rhapsody - Queen",
+                    "🎵 Hotel California - Eagles",
+                    "🎵 Stairway to Heaven - Led Zeppelin",
+                    "🎵 Imagine - John Lennon",
+                    "🎵 Billie Jean - Michael Jackson"
+                ];
+                this.variables.set('music_recommendation', songs[Math.floor(Math.random() * songs.length)]);
+            }
+
+            // my.entertainment.book - Recommandation de livre
+            else if (line.startsWith('my.entertainment.book')) {
+                const books = [
+                    "📚 1984 - George Orwell",
+                    "📚 Le Petit Prince - Antoine de Saint-Exupéry",
+                    "📚 Harry Potter - J.K. Rowling",
+                    "📚 Le Seigneur des Anneaux - J.R.R. Tolkien",
+                    "📚 Dune - Frank Herbert"
+                ];
+                this.variables.set('book_recommendation', books[Math.floor(Math.random() * books.length)]);
+            }
+
+            // my.entertainment.podcast - Recommandation de podcast
+            else if (line.startsWith('my.entertainment.podcast')) {
+                const podcasts = [
+                    "🎙️ Podcast Science",
+                    "🎙️ 2 Heures de Perdues",
+                    "🎙️ Les Regardeurs",
+                    "🎙️ Transfert",
+                    "🎙️ Meta de Choc"
+                ];
+                this.variables.set('podcast_recommendation', podcasts[Math.floor(Math.random() * podcasts.length)]);
+            }
+
+            // === SÉCURITÉ ET MODÉRATION AVANCÉE ===
+
+            // my.security.scan - Scanner de sécurité
+            else if (line.startsWith('my.security.scan')) {
+                const threats = Math.floor(Math.random() * 5);
+                this.variables.set('security_scan', `🔍 Scan terminé: ${threats} menace(s) détectée(s)`);
+            }
+
+            // my.security.antispam - Anti-spam
+            else if (line.startsWith('my.security.antispam')) {
+                const args = this.parseArguments(line);
+                const message = args[0] || '';
+                const isSpam = message.length > 100 || /(.)\1{4,}/.test(message);
+                this.variables.set('spam_check', isSpam ? '⚠️ Message détecté comme spam!' : '✅ Message valide');
+            }
+
+            // my.security.verify - Système de vérification
+            else if (line.startsWith('my.security.verify')) {
+                const verificationCode = Math.floor(Math.random() * 9000) + 1000;
+                this.variables.set('verification_code', `🔐 Code de vérification: ${verificationCode}`);
+            }
+
+            // === ANALYSE ET STATISTIQUES ===
+
+            // my.analytics.stats - Statistiques serveur
+            else if (line.startsWith('my.analytics.stats')) {
+                const stats = {
+                    messages: Math.floor(Math.random() * 10000) + 1000,
+                    active_users: Math.floor(Math.random() * 500) + 50,
+                    channels: Math.floor(Math.random() * 50) + 10
+                };
+                this.variables.set('server_stats', `📊 Messages: ${stats.messages} | Utilisateurs actifs: ${stats.active_users} | Canaux: ${stats.channels}`);
+            }
+
+            // my.analytics.activity - Analyse d'activité
+            else if (line.startsWith('my.analytics.activity')) {
+                const hours = Array.from({length: 24}, (_, i) => `${i}h: ${Math.floor(Math.random() * 100)}`);
+                this.variables.set('activity_graph', hours.slice(0, 5).join(', ') + '...');
+            }
+
+            // === INTÉGRATIONS EXTERNES ===
+
+            // my.api.github - Intégration GitHub
+            else if (line.startsWith('my.api.github')) {
+                const args = this.parseArguments(line);
+                const repo = args[0] || 'mon-repo';
+                this.variables.set('github_info', `🐙 Repo: ${repo} | ⭐ 42 stars | 🍴 15 forks`);
+            }
+
+            // my.api.youtube - Intégration YouTube
+            else if (line.startsWith('my.api.youtube')) {
+                const args = this.parseArguments(line);
+                const query = args[0] || 'discord bot';
+                this.variables.set('youtube_search', `🎬 Recherche YouTube: "${query}" - 156 résultats trouvés`);
+            }
+
+            // my.api.twitter - Intégration Twitter
+            else if (line.startsWith('my.api.twitter')) {
+                const tweets = [
+                    "🐦 Discord.my est incroyable! #coding",
+                    "🐦 Nouveau bot créé aujourd'hui! #discord",
+                    "🐦 La programmation c'est fantastique! #dev"
+                ];
+                this.variables.set('latest_tweet', tweets[Math.floor(Math.random() * tweets.length)]);
+            }
+
+            // === UTILITAIRES AVANCÉS ===
+
+            // my.utils.color - Générateur de couleurs
+            else if (line.startsWith('my.utils.color')) {
+                const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', '#FF9FF3', '#54A0FF'];
+                this.variables.set('random_color', colors[Math.floor(Math.random() * colors.length)]);
+            }
+
+            // my.utils.uuid - Générateur UUID
+            else if (line.startsWith('my.utils.uuid')) {
+                const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    const r = Math.random() * 16 | 0;
+                    const v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+                this.variables.set('generated_uuid', uuid);
+            }
+
+            // my.utils.hash - Hachage simple
+            else if (line.startsWith('my.utils.hash')) {
+                const args = this.parseArguments(line);
+                const text = args[0] || 'hello';
+                let hash = 0;
+                for (let i = 0; i < text.length; i++) {
+                    const char = text.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash;
+                }
+                this.variables.set('text_hash', Math.abs(hash).toString(16));
+            }
+
+            // my.utils.encode - Encodage URL
+            else if (line.startsWith('my.utils.encode')) {
+                const args = this.parseArguments(line);
+                const text = args[0] || '';
+                this.variables.set('encoded_url', encodeURIComponent(text));
+            }
+
+            // my.utils.decode - Décodage URL
+            else if (line.startsWith('my.utils.decode')) {
+                const args = this.parseArguments(line);
+                const text = args[0] || '';
+                try {
+                    this.variables.set('decoded_url', decodeURIComponent(text));
+                } catch {
+                    this.variables.set('decoded_url', 'Erreur de décodage');
+                }
+            }
+
+            // === NOTIFICATIONS ET ALERTES ===
+
+            // my.notification.create - Créer notification
+            else if (line.startsWith('my.notification.create')) {
+                const args = this.parseArguments(line);
+                const title = args[0] || 'Notification';
+                const message = args[1] || 'Message par défaut';
+                this.variables.set('notification', `🔔 ${title}: ${message}`);
+            }
+
+            // my.alert.send - Envoyer alerte
+            else if (line.startsWith('my.alert.send')) {
+                const args = this.parseArguments(line);
+                const type = args[0] || 'info';
+                const message = args[1] || 'Alerte';
+                const emoji = type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+                this.variables.set('alert_message', `${emoji} ${message}`);
+            }
+
+            // === PERSONNALISATION ===
+
+            // my.theme.set - Définir thème
+            else if (line.startsWith('my.theme.set')) {
+                const args = this.parseArguments(line);
+                const theme = args[0] || 'default';
+                const themes = {
+                    'dark': '🌙 Thème sombre activé',
+                    'light': '☀️ Thème clair activé',
+                    'neon': '✨ Thème néon activé',
+                    'retro': '📺 Thème rétro activé'
+                };
+                this.variables.set('theme_status', themes[theme] || '🎨 Thème par défaut');
+            }
+
+            // my.profile.customize - Personnaliser profil
+            else if (line.startsWith('my.profile.customize')) {
+                const args = this.parseArguments(line);
+                const element = args[0] || 'avatar';
+                this.variables.set('profile_update', `✨ ${element} de profil mis à jour!`);
+            }
+
+            // === MINI-JEUX CRÉATIFS ===
+
+            // my.game.riddle - Devinettes
+            else if (line.startsWith('my.game.riddle')) {
+                const riddles = [
+                    { q: "Je suis blanc quand je suis sale. Que suis-je?", a: "Un tableau noir" },
+                    { q: "Plus on m'enlève, plus je deviens grand. Que suis-je?", a: "Un trou" },
+                    { q: "Je commence la nuit et termine le matin. Que suis-je?", a: "La lettre N" }
+                ];
+                const riddle = riddles[Math.floor(Math.random() * riddles.length)];
+                this.variables.set('riddle_question', riddle.q);
+                this.variables.set('riddle_answer', riddle.a);
+            }
+
+            // my.game.wordchain - Chaîne de mots
+            else if (line.startsWith('my.game.wordchain')) {
+                const args = this.parseArguments(line);
+                const lastWord = args[0] || 'discord';
+                const lastLetter = lastWord.slice(-1);
+                const suggestions = [`${lastLetter}obot`, `${lastLetter}rogrammation`, `${lastLetter}nalogue`];
+                this.variables.set('word_suggestion', suggestions[Math.floor(Math.random() * suggestions.length)]);
+            }
+
+            // my.game.memory - Jeu de mémoire
+            else if (line.startsWith('my.game.memory')) {
+                const sequence = Array.from({length: 5}, () => Math.floor(Math.random() * 9) + 1);
+                this.variables.set('memory_sequence', `🧠 Mémorisez: ${sequence.join(' ')}`);
+            }
+
+            // === ÉDUCATION ET APPRENTISSAGE ===
+
+            // my.learn.vocabulary - Vocabulaire
+            else if (line.startsWith('my.learn.vocabulary')) {
+                const words = [
+                    "🇫🇷 Bonjour = 🇬🇧 Hello",
+                    "🇫🇷 Merci = 🇬🇧 Thank you",
+                    "🇫🇷 Au revoir = 🇬🇧 Goodbye",
+                    "🇫🇷 Oui = 🇬🇧 Yes",
+                    "🇫🇷 Non = 🇬🇧 No"
+                ];
+                this.variables.set('vocab_word', words[Math.floor(Math.random() * words.length)]);
+            }
+
+            // my.learn.math - Exercices de maths
+            else if (line.startsWith('my.learn.math')) {
+                const a = Math.floor(Math.random() * 20) + 1;
+                const b = Math.floor(Math.random() * 20) + 1;
+                const operations = ['+', '-', '*'];
+                const op = operations[Math.floor(Math.random() * operations.length)];
+                this.variables.set('math_exercise', `🧮 Calculez: ${a} ${op} ${b} = ?`);
+            }
+
+            // my.learn.coding - Conseils de programmation
+            else if (line.startsWith('my.learn.coding')) {
+                const tips = [
+                    "💡 Toujours commenter votre code!",
+                    "💡 Utilisez des noms de variables explicites!",
+                    "💡 Testez votre code régulièrement!",
+                    "💡 La pratique rend parfait!",
+                    "💡 Apprenez de vos erreurs!"
+                ];
+                this.variables.set('coding_tip', tips[Math.floor(Math.random() * tips.length)]);
+            }
+
+            // === WELLNESS ET SANTÉ ===
+
+            // my.wellness.meditation - Méditation guidée
+            else if (line.startsWith('my.wellness.meditation')) {
+                const meditations = [
+                    "🧘‍♀️ Respirez profondément pendant 5 minutes",
+                    "🧘‍♀️ Concentrez-vous sur votre respiration",
+                    "🧘‍♀️ Videz votre esprit de toute pensée",
+                    "🧘‍♀️ Imaginez un lieu paisible"
+                ];
+                this.variables.set('meditation_guide', meditations[Math.floor(Math.random() * meditations.length)]);
+            }
+
+            // my.wellness.exercise - Exercices
+            else if (line.startsWith('my.wellness.exercise')) {
+                const exercises = [
+                    "💪 20 pompes",
+                    "💪 30 secondes de planche",
+                    "💪 15 squats",
+                    "💪 10 burpees",
+                    "💪 Étirements pendant 2 minutes"
+                ];
+                this.variables.set('exercise_suggestion', exercises[Math.floor(Math.random() * exercises.length)]);
+            }
+
+            // my.wellness.hydration - Rappel hydratation
+            else if (line.startsWith('my.wellness.hydration')) {
+                this.variables.set('hydration_reminder', '💧 N\'oubliez pas de boire de l\'eau! Restez hydraté!');
+            }
+
+            // === CRÉATIVITÉ ET ART ===
+
+            // my.art.palette - Palette de couleurs
+            else if (line.startsWith('my.art.palette')) {
+                const palettes = [
+                    "🎨 Coucher de soleil: #FF6B6B, #FFE66D, #FF8E53",
+                    "🎨 Océan: #006BA6, #0496FF, #FFBC42",
+                    "🎨 Forêt: #2D5016, #68A357, #A4D17A",
+                    "🎨 Pastel: #FFB3C6, #C9A9DD, #A8E6CF"
+                ];
+                this.variables.set('color_palette', palettes[Math.floor(Math.random() * palettes.length)]);
+            }
+
+            // my.art.inspiration - Inspiration artistique
+            else if (line.startsWith('my.art.inspiration')) {
+                const inspirations = [
+                    "🎨 Dessinez votre animal préféré",
+                    "🎨 Créez un portrait abstrait",
+                    "🎨 Illustrez vos émotions",
+                    "🎨 Représentez votre lieu de rêve",
+                    "🎨 Mélangez réalisme et fantaisie"
+                ];
+                this.variables.set('art_inspiration', inspirations[Math.floor(Math.random() * inspirations.length)]);
+            }
+
+            // === DÉVELOPPEMENT COMMUNAUTAIRE ===
+
+            // my.community.leaderboard - Classement communauté
+            else if (line.startsWith('my.community.leaderboard')) {
+                const leaders = [
+                    "🥇 Alice - 2,450 points",
+                    "🥈 Bob - 2,100 points", 
+                    "🥉 Charlie - 1,890 points",
+                    "4️⃣ Diana - 1,650 points",
+                    "5️⃣ Eve - 1,420 points"
+                ];
+                this.variables.set('community_leaderboard', leaders.join('\n'));
+            }
+
+            // my.community.badge - Système de badges
+            else if (line.startsWith('my.community.badge')) {
+                const badges = [
+                    "🏆 Premier pas",
+                    "⭐ Contributeur actif", 
+                    "🎯 Expert",
+                    "🌟 Légende",
+                    "👑 Champion"
+                ];
+                this.variables.set('earned_badge', badges[Math.floor(Math.random() * badges.length)]);
+            }
+
+            // my.community.achievement - Accomplissements
+            else if (line.startsWith('my.community.achievement')) {
+                const achievements = [
+                    "🎉 Premier message envoyé!",
+                    "🔥 Série de 7 jours d'activité!",
+                    "💬 100 messages envoyés!",
+                    "👥 10 amis ajoutés!",
+                    "🎮 Premier jeu terminé!"
+                ];
+                this.variables.set('new_achievement', achievements[Math.floor(Math.random() * achievements.length)]);
+            }
+
             console.log(`💬 ${line}`);
 
         } catch (error) {

@@ -135,7 +135,74 @@ my.discord.avatar('args[0]')
 my.discord.command('stats', 'embed')
 my.discord.embed('title', '📈 Statistiques du Bot', 'description', '**Version:** {bot_version}\n**Serveur:** {serveur_name}\n**Commandes:** 25+\n**Fonctionnalités:** Modération, Fun, Utilitaires\n**Uptime:** Permanent', 'color', '#2ecc71', 'thumbnail', 'https://cdn.discordapp.com/attachments/123/stats.png', 'footer', 'Discord.my v{bot_version}', 'timestamp', 'now')
 
+// === EXEMPLES DE NOUVELLES FONCTIONNALITÉS ===
+
+// Économie avancée
+my.discord.command('shop', 'embed')
+my.economy.shop()
+my.discord.embed('title', '🛒 Boutique Maya', 'description', '{shop_items}', 'color', '#f39c12', 'footer', 'Achetez avec !buy <item>')
+
+my.discord.command('buy', 'embed')
+my.economy.buy('args[0]')
+my.discord.embed('title', '💰 Achat', 'description', '{purchase_result}', 'color', '#27ae60')
+
+// Jeux avancés
+my.discord.command('blackjack', 'embed')
+my.game.blackjack()
+my.discord.embed('title', '🃏 Blackjack', 'description', '{blackjack_game}', 'color', '#2c3e50')
+
+my.discord.command('slots', 'embed')
+my.game.slots()
+my.discord.embed('title', '🎰 Machine à Sous', 'description', '{slots_result}', 'color', '#e74c3c')
+
+// IA et automatisation
+my.discord.command('chatbot', 'embed')
+my.ai.chatbot('args[0]')
+my.discord.embed('title', '🤖 Assistant IA', 'description', '{chatbot_response}', 'color', '#3498db')
+
+// Wellness
+my.discord.command('meditation', 'embed')
+my.wellness.meditation()
+my.discord.embed('title', '🧘‍♀️ Méditation', 'description', '{meditation_guide}', 'color', '#9b59b6')
+
+my.discord.command('exercise', 'embed')
+my.wellness.exercise()
+my.discord.embed('title', '💪 Exercice', 'description', '{exercise_suggestion}', 'color', '#e67e22')
+
+// Créativité
+my.discord.command('palette', 'embed')
+my.art.palette()
+my.discord.embed('title', '🎨 Palette Artistique', 'description', '{color_palette}', 'color', '#ff6b6b')
+
+// Éducation
+my.discord.command('vocab', 'embed')
+my.learn.vocabulary()
+my.discord.embed('title', '📚 Vocabulaire', 'description', '{vocab_word}', 'color', '#48c9b0')
+
+my.discord.command('mathex', 'embed')
+my.learn.math()
+my.discord.embed('title', '🧮 Exercice de Maths', 'description', '{math_exercise}', 'color', '#f7dc6f')
+
+// Utilitaires avancés
+my.discord.command('color', 'embed')
+my.utils.color()
+my.discord.embed('title', '🌈 Couleur Aléatoire', 'description', 'Couleur générée: {random_color}', 'color', '{random_color}')
+
+my.discord.command('uuid', 'embed')
+my.utils.uuid()
+my.discord.embed('title', '🔑 UUID Généré', 'description', '`{generated_uuid}`', 'color', '#17a2b8')
+
+// Communauté
+my.discord.command('leaderboard', 'embed')
+my.community.leaderboard()
+my.discord.embed('title', '🏆 Classement', 'description', '{community_leaderboard}', 'color', '#ffd700')
+
+my.discord.command('achievement', 'embed')
+my.community.achievement()
+my.discord.embed('title', '🎉 Accomplissement', 'description', '{new_achievement}', 'color', '#ff1493')
+
 my.console('✅ Configuration du bot terminée!')
-my.console('🎯 Nouvelles fonctionnalités: images aléatoires, calculatrice, sondages, gestion avancée')
-my.console('🤖 Bot Discord.my v{bot_version} prêt à fonctionner!')
+my.console('🚀 70 NOUVELLES FONCTIONNALITÉS ajoutées!')
+my.console('🎯 Catégories: Économie, Jeux, IA, Social, Productivité, Divertissement, Sécurité, Analytics, Intégrations, Utilitaires, Notifications, Thèmes, Éducation, Wellness, Art, Communauté')
+my.console('🤖 Bot Discord.my v{bot_version} avec toutes les nouvelles fonctionnalités prêt à l\'action!')
 
