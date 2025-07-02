@@ -182,3 +182,6 @@ my.discord.parrot.enable('all')
 
 my.discord.command('parrot-off', 'Perroquet désactivé!')
 my.discord.parrot.disable()
+```
+🍭 Si vous avez des idées creatives de trucs a ajouter a Discord.my faite le nous savoir en contactant ;
+musicclem15@gmail.com

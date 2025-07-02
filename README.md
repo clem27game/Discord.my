@@ -451,3 +451,6 @@ Discord.my conserve la simplicité et la créativité du langage Maya tout en of
 ---
 
 *Discord.my v2.0 - Plus de 50 fonctionnalités pour créer des bots Discord extraordinaires!*
+
+🍭 Si vous avez des idées creatives de trucs  a ajouter a Discord.my faite le nous savoir en contactant ;
+musicclem15@gmail.com
